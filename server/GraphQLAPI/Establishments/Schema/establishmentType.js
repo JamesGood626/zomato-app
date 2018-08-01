@@ -2,16 +2,16 @@ const { gql } = require("apollo-server-express");
 
 const EstablishmentTypeDef = gql`
   type EstablishmentsNormalized {
-    establishments: [Establishments!]!
+    establishments: [Establishments]
   }
 
   type Establishments {
-    establishment: Establishment!
+    establishment: Establishment
   }
 
   type Establishment {
-    id: Int!
-    name: String!
+    id: Int
+    name: String
   }
 `;
 
