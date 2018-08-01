@@ -12,9 +12,9 @@ export const Select = ({
 }) => {
   return (
     <Fragment>
-      <label htmlFor={`${id}-select`}>
+      <label htmlFor={`${id}`}>
         <select
-          id={`${id}-select`}
+          id={`${id}`}
           multiple={multiple}
           onChange={updateSelectedOptions}
         >

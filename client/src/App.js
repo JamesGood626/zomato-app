@@ -1,10 +1,12 @@
 import React, { Component } from "react";
-import ApolloClient from "apollo-boost";
+import { ApolloClient } from "apollo-client";
 import { ApolloLink } from "apollo-link";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { HttpLink } from "apollo-link-http";
 import { withClientState } from "apollo-link-state";
 import { ApolloProvider } from "react-apollo";
+import gql from "graphql-tag";
+// import { getSearchParameters } from "./GraphQL/localQueries";
 import Main from "./Main";
 
 // NOTE: In the blog post that I sent to myself, the guy
@@ -29,12 +31,39 @@ const defaultState = {
 
 const stateLink = withClientState({
   cache,
-  defaults: defaultState
+  defaults: defaultState,
+  resolvers: {
+    Mutation: {
+      updateSearchParameters: (_, { input }, { cache }) => {
+        const { index, value } = input;
+        const query = gql`
+          query GetSearchParameters {
+            searchParameters @client {
+              __typename
+              categoryIDList
+              cuisineIDList
+              establishmentID
+              radius
+            }
+          }
+        `;
+        const previousState = cache.readQuery({ query });
+        const data = {
+          ...previousState,
+          searchParameters: {
+            ...previousState.searchParameters,
+            [index]: value
+          }
+        };
+        cache.writeData({ query, data });
+      }
+    }
+  }
 });
 
 const client = new ApolloClient({
-  link: ApolloLink.from([stateLink, zomatoGraphQLAPI]),
-  cache
+  cache,
+  link: ApolloLink.from([stateLink, zomatoGraphQLAPI])
 });
 
 class App extends Component {

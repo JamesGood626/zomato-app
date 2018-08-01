@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { graphql, compose } from "react-apollo";
 import { getSearchParameters } from "../GraphQL/localQueries";
+import { updateSearchParameters } from "../GraphQL/localMutations";
 import { DropDown } from "../Components/DropDown";
 import { Select } from "../Components/Select";
 
@@ -10,11 +11,8 @@ import { Select } from "../Components/Select";
 // Will change updateSelectedOptions to only fire off when submit is fired. Which will trigger the redirect/search
 
 // TODO:
-// manage state for options which are selected.
-// loading screen before all graphql queries have finished
-// ForAbove (This will require obtaining lat and lon before allEstablishments may be queried)
-// Need to determine the rest of the Apollo Client structure and how I'll manage the query
-// that gets fired off when submit in SearchForm is clicked.
+// fire off the query for restaurant search and utilize the values in
+// this.props.searchParameters for the query variables
 class SearchForm extends Component {
   componentDidMount = () => {
     console.log(
@@ -23,25 +21,78 @@ class SearchForm extends Component {
     );
   };
 
+  componentDidUpdate = () => {
+    console.log("updated comp:", this.props.searchParameters);
+  };
+
   updateSelectedOptions = e => {
     console.log("updateSelectedOptions: ", e.target);
     console.log("The target id: ", e.target.id); // "cuisine-select"/"establishment-select"
     console.log("The target value: ", e.target.value); // id which you'll be saving into state for query
-    // This does indeed turn the HTMLCollection into an array which can be
-    // mapped over...
-    Array.prototype.slice
-      .call(e.target.querySelectorAll(":checked"))
-      .map(option => {
-        // option.value obtains the id you need
-        console.log("This is one of the selected options: ", option);
-      });
+    const { updateSearchParameters } = this.props;
+    const id = e.target.id;
+    let valueArray;
+    let value;
+    if (id === "categoryIDList" || id === "cuisineIDList") {
+      valueArray = Array.prototype.slice
+        .call(e.target.querySelectorAll(":checked"))
+        .map(option => {
+          // option.value obtains the id you need
+          console.log(
+            "This is one of the selected options value: ",
+            option.value
+          );
+          return option.value;
+        });
+    } else {
+      value = e.target.value;
+      console.log("THE VALUE: ", value);
+    }
+    switch (id) {
+      case "categoryIDList":
+        return updateSearchParameters({
+          variables: {
+            input: {
+              index: id,
+              value: valueArray
+            }
+          }
+        });
+      case "cuisineIDList":
+        return updateSearchParameters({
+          variables: {
+            input: {
+              index: id,
+              value: valueArray
+            }
+          }
+        });
+      case "establishmentID":
+        return updateSearchParameters({
+          variables: {
+            input: {
+              index: id,
+              value
+            }
+          }
+        });
+      case "radius":
+        return updateSearchParameters({
+          variables: {
+            input: {
+              index: id,
+              value
+            }
+          }
+        });
+    }
   };
 
   render() {
     return (
       <form>
         <Select
-          id="category"
+          id="categoryIDList"
           title="Categories"
           multiple={true}
           updateSelectedOptions={this.updateSelectedOptions}
@@ -49,7 +100,7 @@ class SearchForm extends Component {
           <DropDown renderOptions={"categories"} />
         </Select>
         <Select
-          id="cuisine"
+          id="cuisineIDList"
           title="Cuisines"
           multiple={true}
           updateSelectedOptions={this.updateSelectedOptions}
@@ -57,7 +108,7 @@ class SearchForm extends Component {
           <DropDown renderOptions={"cuisines"} />
         </Select>
         <Select
-          id="establishment"
+          id="establishmentID"
           title="Establishments"
           updateSelectedOptions={this.updateSelectedOptions}
         >
@@ -85,6 +136,7 @@ class SearchForm extends Component {
 }
 
 export default compose(
+  graphql(updateSearchParameters, { name: "updateSearchParameters" }),
   graphql(getSearchParameters, {
     props: ({ data: { searchParameters } }) => ({
       searchParameters
