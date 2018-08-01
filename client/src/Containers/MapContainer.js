@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import styled from "styled-components";
 import { Map, InfoWindow, Marker, GoogleApiWrapper } from "google-maps-react";
-import { googleMapsKey } from "../Config";
+import { googleAPIKey } from "../Config";
 
 const Div = styled.div`
   height: 100vh;
@@ -34,7 +34,7 @@ export class MapContainer extends Component {
 }
 
 export default GoogleApiWrapper({
-  apiKey: googleMapsKey
+  apiKey: googleAPIKey
 })(MapContainer);
 
 // How you'll add Markers for the restaurant

@@ -29,10 +29,7 @@ const getCategoryOptions = () => {
       {({ loading, error, data }) => {
         if (loading) return null;
         if (error) return errorLoadingOptions(error);
-        if (data) {
-          // Call passed down prop func to indicate loading finished
-          return mapCategoriesData(data);
-        }
+        return mapCategoriesData(data);
       }}
     </Query>
   );
@@ -52,9 +49,7 @@ const getCuisineOptions = () => {
       {({ loading, error, data }) => {
         if (loading) return null;
         if (error) return errorLoadingOptions(error);
-        if (data) {
-          return mapCuisineData(data);
-        }
+        return mapCuisineData(data);
       }}
     </Query>
   );
