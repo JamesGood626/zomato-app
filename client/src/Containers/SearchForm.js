@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { graphql, compose } from "react-apollo";
+import { SEARCH_RESTAURANTS } from "../GraphQL/remoteQueries";
 import { getSearchParameters } from "../GraphQL/localQueries";
 import { updateSearchParameters } from "../GraphQL/localMutations";
 import { DropDown } from "../Components/DropDown";
 import { Select } from "../Components/Select";
 
-// TODO: figure out what to display for loading and error states.
 // Moreso the error state, as I'll be using a loading spinner before data is fetched.
 
 // Will change updateSelectedOptions to only fire off when submit is fired. Which will trigger the redirect/search
@@ -19,10 +19,18 @@ class SearchForm extends Component {
       "The search parameters from apollo-link-state: ",
       this.props.searchParameters
     );
+    console.log("searchRestaurants: ", this.props.searchRestaurants);
+    console.log("props.submit: ", this.props.submit);
+    // this.props.history.push("/");
   };
 
   componentDidUpdate = () => {
-    console.log("updated comp:", this.props.searchParameters);
+    // console.log("updated comp:", this.props.searchParameters);
+    // console.log(
+    //   "searchRestaurants after update: ",
+    //   this.props.searchRestaurants
+    // );
+    console.log("The props after update: ", this.props);
   };
 
   updateSelectedOptions = e => {
@@ -33,7 +41,7 @@ class SearchForm extends Component {
     const id = e.target.id;
     let valueArray;
     let value;
-    if (id === "categoryIDList" || id === "cuisineIDList") {
+    if (id === "categories" || id === "cuisines") {
       valueArray = Array.prototype.slice
         .call(e.target.querySelectorAll(":checked"))
         .map(option => {
@@ -49,7 +57,7 @@ class SearchForm extends Component {
       console.log("THE VALUE: ", value);
     }
     switch (id) {
-      case "categoryIDList":
+      case "categories":
         return updateSearchParameters({
           variables: {
             input: {
@@ -58,7 +66,7 @@ class SearchForm extends Component {
             }
           }
         });
-      case "cuisineIDList":
+      case "cuisines":
         return updateSearchParameters({
           variables: {
             input: {
@@ -67,7 +75,7 @@ class SearchForm extends Component {
             }
           }
         });
-      case "establishmentID":
+      case "establishment":
         return updateSearchParameters({
           variables: {
             input: {
@@ -88,11 +96,34 @@ class SearchForm extends Component {
     }
   };
 
+  redirectToMap = e => {
+    e.preventDefault();
+    this.props.history.push("/map");
+  };
+
+  // startSearchRestaurants = e => {
+  //   e.preventDefault();
+  //   const { searchParameters, submit, latitude, longitude } = this.props;
+  //   const {
+  //     categoryIDList,
+  //     cuisineIDList,
+  //     establishmentID,
+  //     radius
+  //   } = searchParameters;
+  //   const input = {};
+  //   if (categoryIDList.length !== 0) input.categories = categoryIDList;
+  //   if (cuisineIDList.length !== 0) input.cuisines = cuisineIDList;
+  //   if (establishmentID !== null) input.establishment = establishmentID;
+  //   if (radius !== null) input.radius = radius;
+  //   // console.log("Search parameters in submit: ", input);
+  //   submit({ latitude, longitude, input });
+  // };
+
   render() {
     return (
       <form>
         <Select
-          id="categoryIDList"
+          id="categories"
           title="Categories"
           multiple={true}
           updateSelectedOptions={this.updateSelectedOptions}
@@ -100,7 +131,7 @@ class SearchForm extends Component {
           <DropDown renderOptions={"categories"} />
         </Select>
         <Select
-          id="cuisineIDList"
+          id="cuisines"
           title="Cuisines"
           multiple={true}
           updateSelectedOptions={this.updateSelectedOptions}
@@ -108,7 +139,7 @@ class SearchForm extends Component {
           <DropDown renderOptions={"cuisines"} />
         </Select>
         <Select
-          id="establishmentID"
+          id="establishment"
           title="Establishments"
           updateSelectedOptions={this.updateSelectedOptions}
         >
@@ -123,13 +154,13 @@ class SearchForm extends Component {
           title="Radius"
           updateSelectedOptions={this.updateSelectedOptions}
         >
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="15">15</option>
-          <option value="20">20</option>
-          <option value="25">25</option>
+          <option value="5">20000</option>
+          <option value="10">30000</option>
+          <option value="15">40000</option>
+          <option value="20">50000</option>
+          <option value="25">6000</option>
         </Select>
-        <button>Submit</button>
+        <button onClick={this.redirectToMap}>Submit</button>
       </form>
     );
   }

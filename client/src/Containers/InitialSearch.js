@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from "react";
 import styled from "styled-components";
-import { Query } from "react-apollo";
+import { Query, graphql, compose } from "react-apollo";
+import { updateMapPosition } from "../GraphQL/localMutations";
 import gql from "graphql-tag";
 import SearchForm from "./SearchForm";
 import GoogleApiWrapper from "./MapContainer";
@@ -32,27 +33,32 @@ class InitialSearch extends Component {
   };
 
   showPosition = position => {
-    const lat = position.coords.latitude;
-    const lon = position.coords.longitude;
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+    console.log(latitude);
+    console.log(longitude);
     this.setState({
-      latitude: lat,
-      longitude: lon
+      latitude,
+      longitude
     });
-
     console.log(
-      "Latitude: " +
-        position.coords.latitude +
-        "<br>Longitude: " +
-        position.coords.longitude
+      "This is the updateMapPosition resolver function: ",
+      this.props.updateMapPosition
     );
+    return this.props.updateMapPosition({ variables: { latitude, longitude } });
   };
 
   render() {
+    const { history } = this.props;
     const { latitude, longitude } = this.state;
     return (
       <Fragment>
         {latitude && longitude ? (
-          <SearchForm latitude={latitude} longitude={longitude} />
+          <SearchForm
+            history={history}
+            latitude={latitude}
+            longitude={longitude}
+          />
         ) : (
           <LoadingOverlay />
         )}
@@ -61,4 +67,8 @@ class InitialSearch extends Component {
   }
 }
 
-export default InitialSearch;
+// export default InitialSearch;
+
+export default compose(
+  graphql(updateMapPosition, { name: "updateMapPosition" })
+)(InitialSearch);

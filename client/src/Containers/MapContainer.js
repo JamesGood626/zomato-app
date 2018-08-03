@@ -2,33 +2,94 @@ import React, { Component } from "react";
 import styled from "styled-components";
 import { Map, InfoWindow, Marker, GoogleApiWrapper } from "google-maps-react";
 import { googleAPIKey } from "../Config";
+import { Query } from "react-apollo";
+import { SEARCH_RESTAURANTS } from "../GraphQL/remoteQueries";
 
 const Div = styled.div`
   height: 100vh;
   width: 100vw;
 `;
 
+const errorLoadingOptions = error => {
+  console.log("Error loading options: ", error);
+  return null;
+};
+
+const renderMap = (data, google, lat, lon) => {
+  console.log("THIS IS THE RETRIEVED DATA IN MAP CONTAINER: ", data);
+  return (
+    <Div>
+      <Map
+        google={google}
+        style={{ width: "100%", height: "100%", position: "relative" }}
+        initialCenter={{
+          lat: lat,
+          lng: lon
+        }}
+        zoom={14}
+      >
+        {data.allRestaurants.restaurants.map(restaurantData => {
+          const {
+            name,
+            location: { latitude, longitude }
+          } = restaurantData.restaurant;
+          console.log("This is the latitude: ", latitude);
+          console.log("This is the longitude: ", longitude);
+          console.log("This is the namee: ", name);
+          return (
+            <Marker
+              key={name}
+              google={google}
+              title={"The marker`s title will appear as a tooltip."}
+              name={`${name}`}
+              position={{
+                lat: `${latitude}`,
+                lng: `${longitude}`
+              }}
+            />
+          );
+        })}
+      </Map>
+    </Div>
+  );
+};
+
 // Remember to go back to that fullstack react blog post that covers how this lib was created.
 // Lots of gold in there if you have the patience.
 
 export class MapContainer extends Component {
-  // componentDidMount() {
-  //   console.log(this.props.lat + " " + this.props.lon);
-  //   console.log(this.props.google);
-  // }
+  componentDidMount = () => {
+    console.log("THESE ARE THE PROPS IN MAP CONTAINER DID MOUNT: ", this.props);
+  };
+
   render() {
+    const {
+      latitude,
+      longitude,
+      categories,
+      cuisines,
+      establishment,
+      radius,
+      google
+    } = this.props;
     return (
-      <Div>
-        <Map
-          google={this.props.google}
-          // center={{ lat: this.props.lat, lng: this.props.lon }}
-          initialCenter={{
-            lat: this.props.lat,
-            lng: this.props.lon
-          }}
-          zoom={14}
-        />
-      </Div>
+      <Query
+        query={SEARCH_RESTAURANTS}
+        variables={{
+          latitude,
+          longitude,
+          categories,
+          cuisines,
+          establishment,
+          radius
+        }}
+      >
+        {({ loading, error, data }) => {
+          if (loading) return null;
+          if (error) return errorLoadingOptions(error);
+          return renderMap(data, google, latitude, longitude);
+        }}
+      </Query>
     );
   }
 }
@@ -36,6 +97,20 @@ export class MapContainer extends Component {
 export default GoogleApiWrapper({
   apiKey: googleAPIKey
 })(MapContainer);
+
+// export default compose(
+//   graphql(SEARCH_RESTAURANTS, {
+//     props: ({ data: { latitude, longitude, input } }) => ({
+//       latitude,
+//       longitude,
+//       input
+//     })
+//   })
+// )(
+//   GoogleApiWrapper({
+//     apiKey: googleAPIKey
+//   })(MapContainer)
+// );
 
 // How you'll add Markers for the restaurant
 {

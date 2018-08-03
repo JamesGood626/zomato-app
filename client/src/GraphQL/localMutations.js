@@ -27,10 +27,19 @@ const updateSearchParametersTypes = gql`
 export const updateSearchParameters = gql`
   mutation updateSearchParameters($input: UpdateSearchParametersInput) {
     updateSearchParameters(input: $input) @client {
-      categoryIDList
-      cuisineIDList
-      establishmentID
+      categories
+      cuisines
+      establishment
       radius
+    }
+  }
+`;
+
+export const updateMapPosition = gql`
+  mutation updateMapPosition($latitude: Int!, $longitude: Int!) {
+    updateMapPosition(latitude: $latitude, longitude: $longitude) @client {
+      latitude
+      longitude
     }
   }
 `;

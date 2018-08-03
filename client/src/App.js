@@ -18,13 +18,19 @@ console.log("http link: ", HttpLink);
 const cache = new InMemoryCache();
 const zomatoGraphQLAPI = new HttpLink({ uri: "http://localhost:3000/graphql" });
 
-// Add lat and lon here too?
+// Add lat and lon here too so that you may receive that from the cache in the map controller component upon
+// mount and pass it to map container
 const defaultState = {
+  mapPosition: {
+    __typename: "MapPosition",
+    latitude: null,
+    longitude: null
+  },
   searchParameters: {
     __typename: "SearchParameters",
-    categoryIDList: [],
-    cuisineIDList: [],
-    establishmentID: null,
+    categories: [],
+    cuisines: [],
+    establishment: null,
     radius: null
   }
 };
@@ -40,9 +46,9 @@ const stateLink = withClientState({
           query GetSearchParameters {
             searchParameters @client {
               __typename
-              categoryIDList
-              cuisineIDList
-              establishmentID
+              categories
+              cuisines
+              establishment
               radius
             }
           }
@@ -53,6 +59,30 @@ const stateLink = withClientState({
           searchParameters: {
             ...previousState.searchParameters,
             [index]: value
+          }
+        };
+        cache.writeData({ query, data });
+      },
+      updateMapPosition: (_, { latitude, longitude }, { cache }) => {
+        console.log(
+          `Got the latitude: ${latitude} and longitude: ${longitude} in updateMapPosition Resolver`
+        );
+        const query = gql`
+          query GetMapPosition {
+            mapPosition @client {
+              __typename
+              latitude
+              longitude
+            }
+          }
+        `;
+        const previousState = cache.readQuery({ query });
+        const data = {
+          ...previousState,
+          mapPosition: {
+            ...previousState.mapPosition,
+            latitude,
+            longitude
           }
         };
         cache.writeData({ query, data });

@@ -39,6 +39,41 @@ export const GET_ESTABLISHMENTS = gql`
   }
 `;
 
+const updateSearchParametersTypes = gql`
+  input SearchRestaurantInput {
+    latitude: String!
+    longitude: String!
+    categories: [String]
+    cuisines: [String]
+    establishment: String
+    radius: String
+  }
+`;
+
+export const SEARCH_RESTAURANTS = gql`
+  query allRestaurants($input: SearchRestaurantInput) {
+    allRestaurants(input: $input) {
+      restaurants {
+        restaurant {
+          R {
+            res_id
+          }
+          id
+          name
+          location {
+            address
+            city
+            latitude
+            longitude
+            zipcode
+          }
+          average_cost_for_two
+        }
+      }
+    }
+  }
+`;
+
 // Query with Query Variables
 // query allRestaurants($longitude: String!, $latitude: String!, $cuisines: [String]) {
 //   allRestaurants(longitude: $longitude, latitude: $latitude, cuisines: $cuisines) {

@@ -3,10 +3,19 @@ import gql from "graphql-tag";
 export const getSearchParameters = gql`
   query {
     searchParameters @client {
-      categoryIDList
-      cuisineIDList
-      establishmentID
+      categories
+      cuisines
+      establishment
       radius
+    }
+  }
+`;
+
+export const getMapPosition = gql`
+  query {
+    mapPosition @client {
+      latitude
+      longitude
     }
   }
 `;
