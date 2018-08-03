@@ -27,7 +27,7 @@ export const GET_CUISINES = gql`
 `;
 
 export const GET_ESTABLISHMENTS = gql`
-  query Establishments($latitude: String!, $longitude: String!) {
+  query Establishments($latitude: Float!, $longitude: Float!) {
     allEstablishments(latitude: $latitude, longitude: $longitude) {
       establishments {
         establishment {
@@ -41,8 +41,8 @@ export const GET_ESTABLISHMENTS = gql`
 
 const updateSearchParametersTypes = gql`
   input SearchRestaurantInput {
-    latitude: String!
-    longitude: String!
+    latitude: Float!
+    longitude: Float!
     categories: [String]
     cuisines: [String]
     establishment: String

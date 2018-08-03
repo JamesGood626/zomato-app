@@ -36,7 +36,7 @@ export const updateSearchParameters = gql`
 `;
 
 export const updateMapPosition = gql`
-  mutation updateMapPosition($latitude: Int!, $longitude: Int!) {
+  mutation updateMapPosition($latitude: Float!, $longitude: Float!) {
     updateMapPosition(latitude: $latitude, longitude: $longitude) @client {
       latitude
       longitude

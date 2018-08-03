@@ -7,8 +7,6 @@ import SearchForm from "./SearchForm";
 import GoogleApiWrapper from "./MapContainer";
 import LoadingOverlay from "./LoadingOverlay";
 
-// I'll have to create a component for the initial query
-// As this component will be responsible for routing
 const Div = styled.div`
   height: 100%;
   width: 100%;

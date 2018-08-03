@@ -6,12 +6,6 @@ import { getMapPosition } from "../GraphQL/localQueries";
 import { getSearchParameters } from "../GraphQL/localQueries";
 
 class MapController extends Component {
-  // Will be on the route search/results with lat and lon in the url
-
-  componentDidMount = () => {
-    console.log("THE PROPS INSIDE MAP CONTROLLER: ", this.props);
-  };
-
   render() {
     const { latitude, longitude } = this.props.mapPosition;
     const {
@@ -20,7 +14,6 @@ class MapController extends Component {
       establishment,
       radius
     } = this.props.searchParameters;
-    console.log("Props in MapController render: ", this.props);
     return (
       <GoogleApiWrapper
         latitude={latitude}
@@ -34,8 +27,6 @@ class MapController extends Component {
   }
 }
 
-// READ DOCS TO SEE IF YOU CAN FIRE THE MUTATION USING COMPOSE AND GRAPHQL FUNCTIONS
-// TO LAUNCH OF SEARCH RESTAURANTS UPON MAP CONTROLLER MOUNTING
 export default compose(
   graphql(getMapPosition, {
     props: ({ data: { mapPosition } }) => ({

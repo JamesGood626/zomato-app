@@ -9,6 +9,9 @@ import gql from "graphql-tag";
 // import { getSearchParameters } from "./GraphQL/localQueries";
 import Main from "./Main";
 
+// TODO:
+// wtf is this -> writeToStore.js:137 Missing field updateMapPosition in {} (seeing no issues caching data)
+
 // NOTE: In the blog post that I sent to myself, the guy
 // adds the API key to the header on the client side.
 // I'm currently setting that on the serverside, but I think
@@ -18,8 +21,6 @@ console.log("http link: ", HttpLink);
 const cache = new InMemoryCache();
 const zomatoGraphQLAPI = new HttpLink({ uri: "http://localhost:3000/graphql" });
 
-// Add lat and lon here too so that you may receive that from the cache in the map controller component upon
-// mount and pass it to map container
 const defaultState = {
   mapPosition: {
     __typename: "MapPosition",

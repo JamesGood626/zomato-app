@@ -2,8 +2,8 @@ const { gql } = require("apollo-server-express");
 
 const queryTypeDef = gql`
   input SearchRestaurantInput {
-    latitude: String!
-    longitude: String!
+    latitude: Float!
+    longitude: Float!
     categories: [String]
     cuisines: [String]
     establishment: String
@@ -12,10 +12,10 @@ const queryTypeDef = gql`
 
   type Query {
     allCategories: CategoriesNormalized
-    allCuisines(latitude: String, longitude: String): CuisinesNormalized
+    allCuisines(latitude: Float, longitude: Float): CuisinesNormalized
     allEstablishments(
-      latitude: String
-      longitude: String
+      latitude: Float!
+      longitude: Float!
     ): EstablishmentsNormalized
     allRestaurants(input: SearchRestaurantInput): RestaurantSearch
   }

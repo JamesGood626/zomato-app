@@ -6,21 +6,17 @@ import InitialSearch from "./Containers/InitialSearch";
 import { Home } from "./home";
 import MapController from "./Containers/MapController";
 
-// I'll have to create a component for the initial query
-// As this component will be responsible for routing
+// Overview of application flow
+// Initial search renders Select and DropDown options for restaurant search parameters.
+// User can either enter parameters (or change the address of where to search when I add Geolocation functionality)
+// or just hit search and it'll search the surrounding area automatically for food spots.
+// When the submit button in InitialSearch is clicked. this.props.history.push('/map') occurs
+// to mount MapController, which is utilizing react-apollos compose and graphql functions, which automatically
+// assign the requested data from local cache and inject those values into MapController's props.
+// From there MapController passes those props to MapContainer, which then utilizes those props in the Query component to
+// begin fetching allRestaurants. It's so beautiful.
 class Main extends Component {
-  componentDidUpdate = (prevProps, prevState) => {
-    console.log("This is the props in Main: ", this.props);
-  };
-
   render() {
-    // const { latitude, longitude } = this.props.mapPosition;
-    // const {
-    //   categories,
-    //   cuisines,
-    //   establishment,
-    //   radius
-    // } = this.props.searchParameters;
     return (
       <BrowserRouter>
         <Switch>
@@ -34,36 +30,3 @@ class Main extends Component {
 }
 
 export default Main;
-
-// export default compose(
-//   graphql(getMapPosition, {
-//     props: ({ data: { mapPosition } }) => ({
-//       mapPosition
-//     })
-//   }),
-//   graphql(getSearchParameters, {
-//     props: ({ data: { searchParameters } }) => ({
-//       searchParameters
-//     })
-//   })
-// )(Main);
-
-// Just save these queries for a sub component which will comprise the dropdown options
-
-// {
-//             allCuisines {
-//               cuisines {
-//                 cuisine {
-//                   cuisine_id
-//                   cuisine_name
-//                 }
-//               }
-//             }
-//           }
-
-/* <h2>Cuisines</h2>;
-return data.allCuisines.cuisines.map(({ cuisine }) => (
-  <div key={cuisine.cuisine_id}>
-    <p>{`${cuisine.cuisine_name}`}</p>
-  </div>
-)); */

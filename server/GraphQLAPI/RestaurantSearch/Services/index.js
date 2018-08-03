@@ -5,7 +5,6 @@ const getRestaurantSearch = async (
   axios,
   { latitude, longitude, cuisines, categories, establishment, radius }
 ) => {
-  console.log("RUNNING ALL RESTAURANTS");
   let builtUrl = `https://developers.zomato.com/api/v2.1/search?lat=${latitude}&lon=${longitude}`;
   if (typeof cuisines === "object" && cuisines.length > 0) {
     const cuisineQueryString = createEncodedCommaSeparatedQueryString(cuisines);

@@ -154,11 +154,11 @@ class SearchForm extends Component {
           title="Radius"
           updateSelectedOptions={this.updateSelectedOptions}
         >
-          <option value="5">20000</option>
-          <option value="10">30000</option>
-          <option value="15">40000</option>
-          <option value="20">50000</option>
-          <option value="25">6000</option>
+          <option value="20000">20000</option>
+          <option value="30000">30000</option>
+          <option value="40000">40000</option>
+          <option value="50000">50000</option>
+          <option value="60000">60000</option>
         </Select>
         <button onClick={this.redirectToMap}>Submit</button>
       </form>

@@ -16,7 +16,6 @@ const errorLoadingOptions = error => {
 };
 
 const renderMap = (data, google, lat, lon) => {
-  console.log("THIS IS THE RETRIEVED DATA IN MAP CONTAINER: ", data);
   return (
     <Div>
       <Map
@@ -28,17 +27,14 @@ const renderMap = (data, google, lat, lon) => {
         }}
         zoom={14}
       >
-        {data.allRestaurants.restaurants.map(restaurantData => {
+        {data.allRestaurants.restaurants.map((restaurantData, index) => {
           const {
             name,
             location: { latitude, longitude }
           } = restaurantData.restaurant;
-          console.log("This is the latitude: ", latitude);
-          console.log("This is the longitude: ", longitude);
-          console.log("This is the namee: ", name);
           return (
             <Marker
-              key={name}
+              key={`${name}-${index}`}
               google={google}
               title={"The marker`s title will appear as a tooltip."}
               name={`${name}`}
@@ -54,14 +50,7 @@ const renderMap = (data, google, lat, lon) => {
   );
 };
 
-// Remember to go back to that fullstack react blog post that covers how this lib was created.
-// Lots of gold in there if you have the patience.
-
 export class MapContainer extends Component {
-  componentDidMount = () => {
-    console.log("THESE ARE THE PROPS IN MAP CONTAINER DID MOUNT: ", this.props);
-  };
-
   render() {
     const {
       latitude,
@@ -72,18 +61,16 @@ export class MapContainer extends Component {
       radius,
       google
     } = this.props;
+    const input = {
+      latitude,
+      longitude,
+      categories,
+      cuisines,
+      establishment,
+      radius
+    };
     return (
-      <Query
-        query={SEARCH_RESTAURANTS}
-        variables={{
-          latitude,
-          longitude,
-          categories,
-          cuisines,
-          establishment,
-          radius
-        }}
-      >
+      <Query query={SEARCH_RESTAURANTS} variables={{ input }}>
         {({ loading, error, data }) => {
           if (loading) return null;
           if (error) return errorLoadingOptions(error);
