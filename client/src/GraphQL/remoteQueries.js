@@ -68,6 +68,11 @@ export const SEARCH_RESTAURANTS = gql`
             zipcode
           }
           average_cost_for_two
+          user_rating {
+            aggregate_rating
+            votes
+          }
+          menu_url
         }
       }
     }

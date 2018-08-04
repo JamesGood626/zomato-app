@@ -19,6 +19,7 @@ const RestaurantSearchTypeDef = gql`
     location: Location!
     average_cost_for_two: Int!
     user_rating: UserRating!
+    menu_url: String!
   }
 
   type R {

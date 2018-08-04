@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import styled from "styled-components";
 import { Map, InfoWindow, Marker, GoogleApiWrapper } from "google-maps-react";
 import { googleAPIKey } from "../Config";
@@ -10,12 +10,40 @@ const Div = styled.div`
   width: 100vw;
 `;
 
+// const InfoWindowDiv = styled.div`border-radius: 25%;`;
+
+const InfoWindowInnerContainerDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 1rem;
+`;
+
+// Info to display in infowindow pop up
+// From the restaurantData utilize:
+// Address, menu_url, user rating, average cost for two, and the phone number.
+// AND THEN... implement the geocoding feature.
+
 const errorLoadingOptions = error => {
   console.log("Error loading options: ", error);
   return null;
 };
 
-const renderMap = (data, google, lat, lon) => {
+const renderMap = (
+  data,
+  google,
+  lat,
+  lon,
+  state,
+  onMapClick,
+  onMarkerClick,
+  windowHasOpened
+) => {
+  // console.log(
+  //   "THIS IS STATE.SELECTEDPLACED.ADDRESS: ",
+  //   state.selectedPlace["data-address"]
+  // );
   return (
     <Div>
       <Map
@@ -28,12 +56,18 @@ const renderMap = (data, google, lat, lon) => {
         zoom={14}
       >
         {data.allRestaurants.restaurants.map((restaurantData, index) => {
+          console.log("Here's mapped restaurants: ", restaurantData);
           const {
+            id,
             name,
-            location: { latitude, longitude }
+            average_cost_for_two,
+            menu_url,
+            user_rating: { aggregate_rating, votes },
+            location: { latitude, longitude, address, city, zipcode }
           } = restaurantData.restaurant;
           return (
             <Marker
+              id={id}
               key={`${name}-${index}`}
               google={google}
               title={"The marker`s title will appear as a tooltip."}
@@ -42,15 +76,85 @@ const renderMap = (data, google, lat, lon) => {
                 lat: `${latitude}`,
                 lng: `${longitude}`
               }}
+              data-address={address}
+              data-averageCostForTwo={average_cost_for_two}
+              data-menuUrl={menu_url}
+              data-aggregateRating={aggregate_rating}
+              data-votes={votes}
+              onClick={onMarkerClick}
             />
           );
         })}
+        <InfoWindow
+          marker={state.activeMarker}
+          onOpen={windowHasOpened}
+          visible={state.showingInfoWindow}
+        >
+          {state.selectedPlace ? (
+            <InfoWindowInnerContainerDiv>
+              <h4>{state.selectedPlace.name}</h4>
+              <p>
+                Rating: {state.selectedPlace["data-aggregateRating"]} from{" "}
+                {state.selectedPlace["data-votes"]} votes
+              </p>
+              <p>{state.selectedPlace["data-address"]}</p>
+              <p>
+                Average cost for two: ${
+                  state.selectedPlace["data-averageCostForTwo"]
+                }
+              </p>
+              <p>
+                View the menu{" "}
+                <a href={state.selectedPlace["data-menuUrl"]}>here</a>
+              </p>
+            </InfoWindowInnerContainerDiv>
+          ) : (
+            <h1>There's no selectedPlace</h1>
+          )}
+        </InfoWindow>
       </Map>
     </Div>
   );
 };
 
 export class MapContainer extends Component {
+  state = {
+    activeMarker: null,
+    selectedPlace: null,
+    showingInfoWindow: false
+  };
+
+  onMapClick = (props, marker, e) => {
+    if (this.state.showingInfoWindow) {
+      this.setState((prevState, state) => ({
+        activeMarker: null,
+        showingInfoWindow: false
+      }));
+    }
+  };
+
+  onMarkerClick = (props, marker, e) => {
+    console.log("This is the selectedPlace e: ", e);
+    console.log("This is the selectedPlace props: ", props);
+    // const dataAttr = props.getAttribute("data-address");
+    // console.log("SUCCESSFULLY PULLED OFF ADDRESS: ", dataAttr);
+    this.setState({
+      activeMarker: marker,
+      selectedPlace: props,
+      showingInfoWindow: true
+    });
+  };
+
+  windowHasOpened = () => {
+    console.log("WINDOW HAS OPENED");
+  };
+
+  componentDidUpdate = (prevProps, prevState) => {
+    console.log("COMPONENT UPDATED");
+    console.log("prevProps: ", prevProps);
+    console.log("prevState: ", prevState);
+  };
+
   render() {
     const {
       latitude,
@@ -74,7 +178,15 @@ export class MapContainer extends Component {
         {({ loading, error, data }) => {
           if (loading) return null;
           if (error) return errorLoadingOptions(error);
-          return renderMap(data, google, latitude, longitude);
+          return renderMap(
+            data,
+            google,
+            latitude,
+            longitude,
+            this.state,
+            this.onMapClick,
+            this.onMarkerClick
+          );
         }}
       </Query>
     );
