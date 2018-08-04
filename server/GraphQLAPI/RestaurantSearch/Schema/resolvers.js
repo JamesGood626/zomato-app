@@ -14,19 +14,24 @@ const resolvers = {
           establishment,
           radius
         }
-      }
+      },
+      { headers: { zomatoapikey } }
     ) => {
       console.log("RUNNING ALL RESTAURANTS");
       // console.log("The latitude: ", latitude);
       // console.log("The longitude: ", longitude);
-      const restaurants = await getRestaurantSearch(axios, {
-        latitude,
-        longitude,
-        cuisines,
-        categories,
-        establishment,
-        radius
-      });
+      const restaurants = await getRestaurantSearch(
+        axios,
+        {
+          latitude,
+          longitude,
+          cuisines,
+          categories,
+          establishment,
+          radius
+        },
+        zomatoapikey
+      );
       return restaurants.data;
     }
   }

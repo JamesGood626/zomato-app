@@ -1,10 +1,14 @@
-const zomatoKey = require("../../../Config");
+const zomatoAPIKey = require("../../../Config");
 
 // Might need to place the user-key in the header
 const getRestaurantSearch = async (
   axios,
-  { latitude, longitude, cuisines, categories, establishment, radius }
+  { latitude, longitude, cuisines, categories, establishment, radius },
+  zomatoapikey
 ) => {
+  if (process.env.NODE_ENV === "development") {
+    zomatoapikey = zomatoAPIKey;
+  }
   let builtUrl = `https://developers.zomato.com/api/v2.1/search?lat=${latitude}&lon=${longitude}`;
   if (typeof cuisines === "object" && cuisines.length > 0) {
     const cuisineQueryString = createEncodedCommaSeparatedQueryString(cuisines);
@@ -25,7 +29,7 @@ const getRestaurantSearch = async (
   return await axios({
     method: "get",
     url: builtUrl,
-    headers: { "user-key": zomatoKey }
+    headers: { "user-key": zomatoapikey }
   });
 };
 

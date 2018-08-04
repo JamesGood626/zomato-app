@@ -37,7 +37,13 @@ const resolvers = [
 // });
 console.log("IT GETS CALLED");
 // { typeDefs, resolvers }
-const graphQLServer = new ApolloServer({ typeDefs, resolvers });
+const graphQLServer = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: ({ req }) => ({
+    headers: req.headers
+  })
+});
 
 graphQLServer.applyMiddleware({ app });
 

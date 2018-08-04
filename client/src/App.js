@@ -6,6 +6,7 @@ import { HttpLink } from "apollo-link-http";
 import { withClientState } from "apollo-link-state";
 import { ApolloProvider } from "react-apollo";
 import gql from "graphql-tag";
+import { zomatoAPIKey, googleAPIKey } from "./Config";
 // import { getSearchParameters } from "./GraphQL/localQueries";
 import Main from "./Main";
 
@@ -16,10 +17,12 @@ import Main from "./Main";
 // adds the API key to the header on the client side.
 // I'm currently setting that on the serverside, but I think
 // it's better to go that route instead.
-console.log("http link: ", HttpLink);
 
 const cache = new InMemoryCache();
-const zomatoGraphQLAPI = new HttpLink({ uri: "http://localhost:3000/graphql" });
+const zomatoGraphQLAPI = new HttpLink({
+  uri: "http://localhost:3000/graphql",
+  headers: { zomatoAPIKey, googleAPIKey }
+});
 
 const defaultState = {
   mapPosition: {

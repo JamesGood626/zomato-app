@@ -3,9 +3,17 @@ const getCuisines = require("../Services");
 
 const resolvers = {
   Query: {
-    allCuisines: async (parentValue, { latitude, longitude }) => {
+    allCuisines: async (
+      parentValue,
+      { latitude, longitude },
+      { headers: { zomatoapikey } }
+    ) => {
       console.log("RUNNING ALL CUISINES");
-      const cuisines = await getCuisines(axios, { latitude, longitude });
+      const cuisines = await getCuisines(
+        axios,
+        { latitude, longitude },
+        zomatoapikey
+      );
       return cuisines.data;
     }
   }
