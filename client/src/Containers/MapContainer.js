@@ -10,8 +10,6 @@ const Div = styled.div`
   width: 100vw;
 `;
 
-// const InfoWindowDiv = styled.div`border-radius: 25%;`;
-
 const InfoWindowInnerContainerDiv = styled.div`
   display: flex;
   flex-direction: column;
@@ -19,11 +17,6 @@ const InfoWindowInnerContainerDiv = styled.div`
   align-items: flex-start;
   margin: 1rem;
 `;
-
-// Info to display in infowindow pop up
-// From the restaurantData utilize:
-// Address, menu_url, user rating, average cost for two, and the phone number.
-// AND THEN... implement the geocoding feature.
 
 const errorLoadingOptions = error => {
   console.log("Error loading options: ", error);
@@ -40,10 +33,6 @@ const renderMap = (
   onMarkerClick,
   windowHasOpened
 ) => {
-  // console.log(
-  //   "THIS IS STATE.SELECTEDPLACED.ADDRESS: ",
-  //   state.selectedPlace["data-address"]
-  // );
   return (
     <Div>
       <Map
@@ -56,7 +45,6 @@ const renderMap = (
         zoom={14}
       >
         {data.allRestaurants.restaurants.map((restaurantData, index) => {
-          console.log("Here's mapped restaurants: ", restaurantData);
           const {
             id,
             name,
@@ -124,6 +112,16 @@ export class MapContainer extends Component {
     showingInfoWindow: false
   };
 
+  shouldComponentUpdate = (nextProps, nextState) => {
+    if (
+      this.state.selectedPlace &&
+      nextState.selectedPlace.id === this.state.selectedPlace.id
+    ) {
+      return false;
+    }
+    return true;
+  };
+
   onMapClick = (props, marker, e) => {
     if (this.state.showingInfoWindow) {
       this.setState((prevState, state) => ({
@@ -134,10 +132,6 @@ export class MapContainer extends Component {
   };
 
   onMarkerClick = (props, marker, e) => {
-    console.log("This is the selectedPlace e: ", e);
-    console.log("This is the selectedPlace props: ", props);
-    // const dataAttr = props.getAttribute("data-address");
-    // console.log("SUCCESSFULLY PULLED OFF ADDRESS: ", dataAttr);
     this.setState({
       activeMarker: marker,
       selectedPlace: props,
@@ -147,12 +141,7 @@ export class MapContainer extends Component {
 
   windowHasOpened = () => {
     console.log("WINDOW HAS OPENED");
-  };
-
-  componentDidUpdate = (prevProps, prevState) => {
-    console.log("COMPONENT UPDATED");
-    console.log("prevProps: ", prevProps);
-    console.log("prevState: ", prevState);
+    // Could do some fancy animation here if I so desire.
   };
 
   render() {
@@ -196,6 +185,20 @@ export class MapContainer extends Component {
 export default GoogleApiWrapper({
   apiKey: googleAPIKey
 })(MapContainer);
+
+// export default compose(
+//   graphql(SEARCH_RESTAURANTS, {
+//     props: ({ data: { latitude, longitude, input } }) => ({
+//       latitude,
+//       longitude,
+//       input
+//     })
+//   })
+// )(
+//   GoogleApiWrapper({
+//     apiKey: googleAPIKey
+//   })(MapContainer)
+// );
 
 // export default compose(
 //   graphql(SEARCH_RESTAURANTS, {

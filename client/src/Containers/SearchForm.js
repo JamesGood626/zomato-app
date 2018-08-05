@@ -5,6 +5,7 @@ import { getSearchParameters } from "../GraphQL/localQueries";
 import { updateSearchParameters } from "../GraphQL/localMutations";
 import { DropDown } from "../Components/DropDown";
 import { Select } from "../Components/Select";
+import Geocoder from "../Components/Geocoder";
 
 // Moreso the error state, as I'll be using a loading spinner before data is fetched.
 
@@ -22,6 +23,9 @@ class SearchForm extends Component {
     console.log("searchRestaurants: ", this.props.searchRestaurants);
     console.log("props.submit: ", this.props.submit);
     // this.props.history.push("/");
+    // const input = "ads";
+    // const newInst = new window.google.maps.places.Autocomplete(input);
+    console.log("THIS.PROPS.GOOGLE: ", this.props.google.maps.places);
   };
 
   componentDidUpdate = () => {
@@ -160,6 +164,7 @@ class SearchForm extends Component {
           <option value="50000">50000</option>
           <option value="60000">60000</option>
         </Select>
+        <Geocoder google={this.props.google} />
         <button onClick={this.redirectToMap}>Submit</button>
       </form>
     );

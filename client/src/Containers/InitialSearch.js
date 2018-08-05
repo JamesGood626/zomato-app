@@ -6,6 +6,7 @@ import gql from "graphql-tag";
 import SearchForm from "./SearchForm";
 import GoogleApiWrapper from "./MapContainer";
 import LoadingOverlay from "./LoadingOverlay";
+import { googleAPIKey } from "../Config";
 
 const Div = styled.div`
   height: 100%;
@@ -15,12 +16,26 @@ const Div = styled.div`
 class InitialSearch extends Component {
   state = {
     latitude: null,
-    longitude: null
+    longitude: null,
+    trigger: false
   };
 
-  componentDidMount() {
+  componentDidMount = () => {
     this.getLocation();
-  }
+    // Necessary to achieve Geolocation functionality
+    const googleMapScript = document.createElement("script");
+    googleMapScript.setAttribute("id", "addedScript");
+    googleMapScript.src = `https://maps.googleapis.com/maps/api/js?key=${googleAPIKey}&libraries=places`;
+    document.body.appendChild(googleMapScript);
+  };
+
+  componentDidUpdate = (prevProps, prevState) => {
+    console.log("Something should be here TWO? ", window.google);
+  };
+
+  componentWillUnmount = () => {
+    document.getElementById("addedScript").remove();
+  };
 
   getLocation = () => {
     if (navigator.geolocation) {
@@ -56,6 +71,7 @@ class InitialSearch extends Component {
             history={history}
             latitude={latitude}
             longitude={longitude}
+            google={window.google}
           />
         ) : (
           <LoadingOverlay />

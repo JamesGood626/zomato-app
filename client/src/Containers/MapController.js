@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { graphql, compose } from "react-apollo";
-import GoogleApiWrapper from "./MapContainer";
+import MapContainer from "./MapContainer";
 import { SEARCH_RESTAURANTS } from "../GraphQL/remoteQueries";
 import { getMapPosition } from "../GraphQL/localQueries";
 import { getSearchParameters } from "../GraphQL/localQueries";
@@ -15,7 +15,7 @@ class MapController extends Component {
       radius
     } = this.props.searchParameters;
     return (
-      <GoogleApiWrapper
+      <MapContainer
         latitude={latitude}
         longitude={longitude}
         categories={categories}

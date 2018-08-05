@@ -1,6 +1,6 @@
 const zomatoAPIKey = require("../../../Config");
 
-const getCuisines = async (axios, { latitude, longitude }) => {
+const getCuisines = async (axios, { latitude, longitude }, zomatoapikey) => {
   if (process.env.NODE_ENV === "development") {
     zomatoapikey = zomatoAPIKey;
   }
