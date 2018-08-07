@@ -3,7 +3,7 @@ import { graphql, compose } from "react-apollo";
 import { BrowserRouter } from "react-router-dom";
 import { Route, Switch } from "react-router";
 import InitialSearch from "./Containers/InitialSearch";
-import { Home } from "./home";
+import Home from "./AriaListbox/home";
 import MapController from "./Containers/MapController";
 
 // Overview of application flow

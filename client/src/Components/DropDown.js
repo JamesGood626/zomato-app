@@ -11,6 +11,7 @@ import LoadingOverlay from "../Containers/LoadingOverlay";
 // compose queries to ensure loading screen stays up for entire
 // duration of querying graphql api
 // figure out what to display for loading and error states.
+
 const stillLoading = () => {
   console.log("still loading...");
   return null;

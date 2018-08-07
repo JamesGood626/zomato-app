@@ -4,6 +4,7 @@ import { SEARCH_RESTAURANTS } from "../GraphQL/remoteQueries";
 import { getSearchParameters } from "../GraphQL/localQueries";
 import { updateSearchParameters } from "../GraphQL/localMutations";
 import { DropDown } from "../Components/DropDown";
+import { DropDownComposed } from "../Components/DropDownComposed";
 import { Select } from "../Components/Select";
 import Geocoder from "../Components/Geocoder";
 
@@ -126,7 +127,29 @@ class SearchForm extends Component {
   render() {
     return (
       <form>
-        <Select
+        <DropDownComposed
+          latitude={this.props.latitude}
+          longitude={this.props.longitude}
+          updateSelectedOptions={this.updateSelectedOptions}
+        />
+        <Geocoder google={this.props.google} />
+        <button onClick={this.redirectToMap}>Submit</button>
+      </form>
+    );
+  }
+}
+
+export default compose(
+  graphql(updateSearchParameters, { name: "updateSearchParameters" }),
+  graphql(getSearchParameters, {
+    props: ({ data: { searchParameters } }) => ({
+      searchParameters
+    })
+  })
+)(SearchForm);
+
+{
+  /* <Select
           id="categories"
           title="Categories"
           multiple={true}
@@ -157,25 +180,11 @@ class SearchForm extends Component {
           id="radius"
           title="Radius"
           updateSelectedOptions={this.updateSelectedOptions}
-        >
-          <option value="20000">20000</option>
+        ><option value="20000">20000</option>
           <option value="30000">30000</option>
           <option value="40000">40000</option>
           <option value="50000">50000</option>
           <option value="60000">60000</option>
         </Select>
-        <Geocoder google={this.props.google} />
-        <button onClick={this.redirectToMap}>Submit</button>
-      </form>
-    );
-  }
+*/
 }
-
-export default compose(
-  graphql(updateSearchParameters, { name: "updateSearchParameters" }),
-  graphql(getSearchParameters, {
-    props: ({ data: { searchParameters } }) => ({
-      searchParameters
-    })
-  })
-)(SearchForm);
