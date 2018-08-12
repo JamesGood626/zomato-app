@@ -1,5 +1,6 @@
 import React, { Fragment } from "react";
 import { Query } from "react-apollo";
+import styled from "styled-components";
 import {
   GET_CATEGORIES,
   GET_CUISINES,
@@ -7,46 +8,94 @@ import {
 } from "../GraphQL/remoteQueries";
 import LoadingOverlay from "../Containers/LoadingOverlay";
 
-const stillLoading = () => {
-  console.log("still loading...");
-  return null;
-};
+const SelectContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 14rem;
 
-const errorLoadingOptions = error => {
-  console.log("Error loading options: ", error);
-  return null;
-};
+  label {
+    margin-bottom: 0.4rem;
+    font-size: 1.4rem;
+    color: #999;
+  }
+`;
+
+const Select = styled.select`
+  font-size: 1.1rem;
+  border-radius: 0;
+
+  &:focus {
+    outline: none;
+    border: 2px solid #fa5106;
+  }
+`;
+
+const MultiSelect = styled.select`
+  height: 5rem;
+  width: 14rem;
+  font-size: 1.1rem;
+  background: #fcfcfc;
+
+  &:focus {
+    outline: none;
+    border: 2px solid #fa5106;
+  }
+`;
+
+// const stillLoading = () => {
+//   console.log("still loading...");
+//   return null;
+// };
+
+// const errorLoadingOptions = error => {
+//   console.log("Error loading options: ", error);
+//   return null;
+// };
 
 const mapCategoriesData = (allCategories, updateSelectedOptions) => {
-  console.log("MAPPING CATEGORIES: ", allCategories);
   return (
-    <select id="categories" onChange={updateSelectedOptions} multiple>
-      {allCategories.categories.map(({ categories: { id, name } }) => (
-        <option key={id} value={id}>{`${name}`}</option>
-      ))}}
-    </select>
+    <SelectContainer>
+      <label labelfor="categories">Categories:</label>
+      <MultiSelect id="categories" onChange={updateSelectedOptions} multiple>
+        {allCategories.categories.map(({ categories: { id, name } }) => (
+          <option key={id} value={id}>{`${name}`}</option>
+        ))}
+        }
+      </MultiSelect>
+    </SelectContainer>
   );
 };
 
 const mapCuisineData = (allCuisines, updateSelectedOptions) => {
   return (
-    <select id="cuisines" onChange={updateSelectedOptions} multiple>
-      {allCuisines.cuisines.map(({ cuisine: { cuisine_id, cuisine_name } }) => (
-        <option key={cuisine_id} value={cuisine_id}>{`${cuisine_name}`}</option>
-      ))}
-    </select>
+    <SelectContainer>
+      <label labelfor="cuisines">Cuisines:</label>
+      <MultiSelect id="cuisines" onChange={updateSelectedOptions} multiple>
+        {allCuisines.cuisines.map(
+          ({ cuisine: { cuisine_id, cuisine_name } }) => (
+            <option
+              key={cuisine_id}
+              value={cuisine_id}
+            >{`${cuisine_name}`}</option>
+          )
+        )}
+      </MultiSelect>
+    </SelectContainer>
   );
 };
 
 const mapEstablishmentData = (allEstablishments, updateSelectedOptions) => {
   return (
-    <select id="establishment" onChange={updateSelectedOptions}>
-      {allEstablishments.establishments.map(
-        ({ establishment: { id, name } }) => (
-          <option key={id} value={id}>{`${name}`}</option>
-        )
-      )}
-    </select>
+    <SelectContainer>
+      <label labelfor="establishment">Establishment:</label>
+      <Select id="establishment" onChange={updateSelectedOptions}>
+        {allEstablishments.establishments.map(
+          ({ establishment: { id, name } }) => (
+            <option key={id} value={id}>{`${name}`}</option>
+          )
+        )}
+      </Select>
+    </SelectContainer>
   );
 };
 
@@ -73,24 +122,8 @@ export const DropDownComposed = ({
                   loadingCuisines ||
                   loadingEstablishments
                 ) {
-                  console.log("loading...");
                   return <LoadingOverlay />;
                 }
-                console.log("loadingCategories: ", loadingCategories);
-                console.log("loadingCuisines: ", loadingCuisines);
-                console.log("loadingEstablishments: ", loadingEstablishments);
-                console.log("allCategories: ", allCategories);
-                console.log("allCuisines: ", allCuisines);
-                console.log("allEstablishments: ", allEstablishments);
-                if (
-                  loadingCategories ||
-                  loadingCuisines ||
-                  loadingEstablishments
-                ) {
-                  console.log("loading...");
-                  return <LoadingOverlay />;
-                }
-                console.log("MAKING IT TO THE RETURN...");
                 return (
                   <Fragment>
                     {mapCategoriesData(allCategories, updateSelectedOptions)}

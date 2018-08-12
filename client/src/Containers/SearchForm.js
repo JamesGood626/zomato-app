@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import styled from "styled-components";
 import { graphql, compose } from "react-apollo";
 import { SEARCH_RESTAURANTS } from "../GraphQL/remoteQueries";
 import { getSearchParameters } from "../GraphQL/localQueries";
@@ -8,6 +9,26 @@ import { DropDownComposed } from "../Components/DropDownComposed";
 import { Select } from "../Components/Select";
 import Geocoder from "../Components/Geocoder";
 
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  height: 32rem;
+  width: 30vw;
+  min-width: 18rem;
+  max-width: 28rem;
+  background: #fcfcfc;
+`;
+
+const Button = styled.button`
+  width: 10rem;
+  height: 2.6rem;
+  font-size: 1.2rem;
+  color: #fcfcfc;
+  border: none;
+  background: #fa5106;
+`;
 // Moreso the error state, as I'll be using a loading spinner before data is fetched.
 
 // Will change updateSelectedOptions to only fire off when submit is fired. Which will trigger the redirect/search
@@ -39,9 +60,9 @@ class SearchForm extends Component {
   };
 
   updateSelectedOptions = e => {
-    console.log("updateSelectedOptions: ", e.target);
-    console.log("The target id: ", e.target.id); // "cuisine-select"/"establishment-select"
-    console.log("The target value: ", e.target.value); // id which you'll be saving into state for query
+    // console.log("updateSelectedOptions: ", e.target);
+    // console.log("The target id: ", e.target.id); // "cuisine-select"/"establishment-select"
+    // console.log("The target value: ", e.target.value); // id which you'll be saving into state for query
     const { updateSearchParameters } = this.props;
     const id = e.target.id;
     let valueArray;
@@ -59,7 +80,6 @@ class SearchForm extends Component {
         });
     } else {
       value = e.target.value;
-      console.log("THE VALUE: ", value);
     }
     switch (id) {
       case "categories":
@@ -106,35 +126,17 @@ class SearchForm extends Component {
     this.props.history.push("/map");
   };
 
-  // startSearchRestaurants = e => {
-  //   e.preventDefault();
-  //   const { searchParameters, submit, latitude, longitude } = this.props;
-  //   const {
-  //     categoryIDList,
-  //     cuisineIDList,
-  //     establishmentID,
-  //     radius
-  //   } = searchParameters;
-  //   const input = {};
-  //   if (categoryIDList.length !== 0) input.categories = categoryIDList;
-  //   if (cuisineIDList.length !== 0) input.cuisines = cuisineIDList;
-  //   if (establishmentID !== null) input.establishment = establishmentID;
-  //   if (radius !== null) input.radius = radius;
-  //   // console.log("Search parameters in submit: ", input);
-  //   submit({ latitude, longitude, input });
-  // };
-
   render() {
     return (
-      <form>
+      <Form>
         <DropDownComposed
           latitude={this.props.latitude}
           longitude={this.props.longitude}
           updateSelectedOptions={this.updateSelectedOptions}
         />
         <Geocoder google={this.props.google} />
-        <button onClick={this.redirectToMap}>Submit</button>
-      </form>
+        <Button onClick={this.redirectToMap}>Submit</Button>
+      </Form>
     );
   }
 }

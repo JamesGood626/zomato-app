@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import styled from "styled-components";
 import { Query, graphql, compose } from "react-apollo";
 import { updateMapPosition } from "../GraphQL/localMutations";
@@ -8,9 +8,35 @@ import GoogleApiWrapper from "./MapContainer";
 import LoadingOverlay from "./LoadingOverlay";
 import { googleAPIKey } from "../Config";
 
-const Div = styled.div`
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100%;
-  width: 100%;
+  width: 100vw;
+  background: #fa5106;
+  padding: 2rem 0;
+`;
+
+const FormContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+
+  @media (min-width: 600px) {
+    width: auto;
+  }
+`;
+
+const H1 = styled.h1`
+  font-size: 1.4rem;
+  color: #fcfcfc;
+  margin-bottom: 1rem;
+
+  @media (min-width: 600px) {
+    font-size: 2rem;
+  }
 `;
 
 class InitialSearch extends Component {
@@ -65,23 +91,24 @@ class InitialSearch extends Component {
     const { history } = this.props;
     const { latitude, longitude } = this.state;
     return (
-      <Fragment>
+      <Container>
         {latitude && longitude ? (
-          <SearchForm
-            history={history}
-            latitude={latitude}
-            longitude={longitude}
-            google={window.google}
-          />
+          <FormContainer>
+            <H1>Fill out the form, or just hit search</H1>
+            <SearchForm
+              history={history}
+              latitude={latitude}
+              longitude={longitude}
+              google={window.google}
+            />
+          </FormContainer>
         ) : (
           <LoadingOverlay />
         )}
-      </Fragment>
+      </Container>
     );
   }
 }
-
-// export default InitialSearch;
 
 export default compose(
   graphql(updateMapPosition, { name: "updateMapPosition" })

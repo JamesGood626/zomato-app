@@ -1,9 +1,13 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import styled from "styled-components";
 import { Map, InfoWindow, Marker, GoogleApiWrapper } from "google-maps-react";
 import { googleAPIKey } from "../Config";
 import { Query } from "react-apollo";
 import { SEARCH_RESTAURANTS } from "../GraphQL/remoteQueries";
+
+// Remember MapFacilitator and making it a compound component so that
+// the map prop can be passed down to Marker without having to render the
+// Map inside of renderMap -> as an attempt to mitigate the flashing markers on marker click.
 
 const Div = styled.div`
   height: 100vh;
@@ -75,7 +79,7 @@ const renderMap = (
         })}
         <InfoWindow
           marker={state.activeMarker}
-          onOpen={windowHasOpened}
+          // onOpen={windowHasOpened}
           visible={state.showingInfoWindow}
         >
           {state.selectedPlace ? (
@@ -87,9 +91,8 @@ const renderMap = (
               </p>
               <p>{state.selectedPlace["data-address"]}</p>
               <p>
-                Average cost for two: ${
-                  state.selectedPlace["data-averageCostForTwo"]
-                }
+                Average cost for two: $
+                {state.selectedPlace["data-averageCostForTwo"]}
               </p>
               <p>
                 View the menu{" "}
@@ -139,10 +142,10 @@ export class MapContainer extends Component {
     });
   };
 
-  windowHasOpened = () => {
-    console.log("WINDOW HAS OPENED");
-    // Could do some fancy animation here if I so desire.
-  };
+  // windowHasOpened = () => {
+  //   console.log("WINDOW HAS OPENED");
+  //   // Could do some fancy animation here if I so desire.
+  // };
 
   render() {
     const {
@@ -240,8 +243,8 @@ export default GoogleApiWrapper({
 }
 
 /***************
-* THE MARKET COMPONENT'S EVENTS
-***************/
+ * THE MARKET COMPONENT'S EVENTS
+ ***************/
 
 // Events
 // The <Marker /> component listens for events, similar to the <Map /> component.

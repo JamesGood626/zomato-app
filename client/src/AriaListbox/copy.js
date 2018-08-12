@@ -27,9 +27,10 @@ const Select = styled.select`
   width: 280px;
 `;
 
-export default class Home extends Component {
+export default class AriaListBox extends Component {
   state = {
-    selectedValue: ""
+    selectedValue: "",
+    selectedValues: {}
   };
 
   componentDidMount = () => {
@@ -50,13 +51,13 @@ export default class Home extends Component {
   // };
 
   /************************
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * Listbox Button specific
-   * 
-   * 
-   * 
+   *
+   *
+   *
    ***********************/
 
   listboxButton = (button, listbox) => {
@@ -66,10 +67,8 @@ export default class Home extends Component {
   };
 
   registerListboxButtonEvents = () => {
-    console.log("THIS IS THIS: ", this);
     this.button.addEventListener("click", this.showListbox.bind(this));
     this.button.addEventListener("keyup", this.checkShow.bind(this));
-    console.log("THIS.LISTBOX.LISTBOXNODE: ", this.listboxNode);
     this.listboxNode.addEventListener("blur", this.hideListbox.bind(this));
     this.listboxNode.addEventListener("keydown", this.checkHide.bind(this));
     // ErroredOut -> this.listboxNode.setHandleFocusChange(this.onFocusChange.bind(this));
@@ -119,22 +118,20 @@ export default class Home extends Component {
   };
 
   /*******************
-   * 
-   * 
-   * 
+   *
+   *
+   *
    *  Listbox specific
-   * 
-   * 
-   * 
+   *
+   *
+   *
    ******************/
 
   listBox = listboxNode => {
     this.listboxNode = listboxNode;
-    console.log("THE LIST BOX NODE: ", listboxNode);
     this.activeDescendant = this.listboxNode.getAttribute(
       "aria-activedescendant"
     );
-    console.log("THE ACTIVE DESCENDANT: ", this.activeDescendant);
     this.multiselectable = this.listboxNode.hasAttribute(
       "aria-multiselectable"
     );
@@ -219,6 +216,7 @@ export default class Home extends Component {
         if (key === KeyCode.UP) {
           nextItem = nextItem.previousElementSibling;
         } else {
+          // This is the reason chocolate is always selected first upon initial down arrow to open listbox.
           nextItem = nextItem.nextElementSibling;
         }
 
@@ -240,7 +238,7 @@ export default class Home extends Component {
         this.toggleSelectItem(nextItem);
         break;
       case KeyCode.RETURN:
-        this.updateValues(this.activeDescendant);
+        this.updateValues(this.activeDescendant, nextItem);
       case KeyCode.BACKSPACE: // 8
       case KeyCode.DELETE: // 46
       case KeyCode.RETURN: // 13
@@ -374,13 +372,11 @@ export default class Home extends Component {
     }
 
     element.removeAttribute("class", "focused");
-    // this.Utils.removeClass(element, "focused");
   };
 
   focusItem = element => {
     this.defocusItem(document.getElementById(this.activeDescendant));
     element.setAttribute("class", "focused");
-    // this.Utils.addClass(element, "focused");
     this.listboxNode.setAttribute("aria-activedescendant", element.id);
     this.activeDescendant = element.id;
 
@@ -563,10 +559,26 @@ export default class Home extends Component {
   };
 
   // For updating selected values in state
-  updateValues = activeDescendant => {
-    this.setState({
-      selectedValue: activeDescendant
-    });
+
+  // VERTIFY THIS IS WORKING FOR MULTISELECT
+  updateValues = (activeDescendant, currentElement) => {
+    console.log("The active descendant in updateValues: ", activeDescendant);
+    console.log("The active descendant in  currentElement: ", currentElement);
+    if (this.props.multiselectable) {
+      if (this.state[activeDescendant]) {
+        delete this.state[activeDescendant];
+        currentElement.setAttribute("aria-selected", "false");
+      } else {
+        this.setState((prevState, state) => ({
+          selectedValues: { ...prevState.selectedValues, activeDescendant }
+        }));
+        currentElement.setAttribute("aria-selected", "true");
+      }
+    } else {
+      this.setState({
+        selectedValue: activeDescendant
+      });
+    }
   };
 
   handleClick = e => {
@@ -577,55 +589,44 @@ export default class Home extends Component {
 
   render() {
     return (
-      <ContainerDiv>
-        <DropDownContainerDiv id="dropdown-select">
-          <DropDownButton
-            tabIndex="0"
-            aria-haspopup="listbox"
-            aria-labelledby="dropdown_button"
-            id="dropdown_button"
-            class="dropdown-select-button"
-          >
-            Please Select
-          </DropDownButton>
-          <Arrow class="triangle">&#9660;</Arrow>
-          <ListBoxUl
-            id="listbox_list"
-            role="listbox"
-            aria-labelledby="dropdown_button"
-            className="dropdown-selection hidden"
-            onClick={this.handleClick}
-            tabIndex="-1"
-          >
-            <OptionLi role="option" id="vanilla">
-              Vanilla
-            </OptionLi>
-            <OptionLi role="option" id="chocolate">
-              Chocolate
-            </OptionLi>
-            <OptionLi role="option" id="strawberry">
-              Strawberry
-            </OptionLi>
-            <OptionLi role="option" id="banana">
-              Banana
-            </OptionLi>
-          </ListBoxUl>
-        </DropDownContainerDiv>
-        <Select>
-          <option>one</option>
-          <option>two</option>
-          <option>three</option>
-        </Select>
-        <Select multiple>
-          <option>one</option>
-          <option>two</option>
-          <option>three</option>
-        </Select>
-      </ContainerDiv>
+      <DropDownContainerDiv id="dropdown-select">
+        <DropDownButton
+          tabIndex="0"
+          aria-haspopup="listbox"
+          aria-labelledby="dropdown_button"
+          id="dropdown_button"
+          class="dropdown-select-button"
+        >
+          Please Select
+        </DropDownButton>
+        <Arrow class="triangle">&#9660;</Arrow>
+        <ListBoxUl
+          id="listbox_list"
+          role="listbox"
+          aria-multiselectable={this.props.multiselectable}
+          aria-labelledby="dropdown_button"
+          className="dropdown-selection hidden"
+          onClick={this.handleClick}
+          tabIndex="-1"
+        >
+          {this.props.children}
+        </ListBoxUl>
+      </DropDownContainerDiv>
     );
   }
 }
 
+/* <Select>
+          <option>one</option>
+          <option>two</option>
+          <option>three</option>
+        </Select> */
+
+/* <Select multiple>
+          <option>one</option>
+          <option>two</option>
+          <option>three</option>
+        </Select> */
 // Some aria stuff I might mess around w/ in the future....
 
 // aria-expanded="true" should be set on the button (DropDownButton) when listbox is expanded
@@ -722,3 +723,18 @@ const OptionLi = styled.li`
     background: yellow;
   }
 `;
+
+{
+  /* <OptionLi role="option" id="vanilla">
+  Vanilla
+</OptionLi>
+<OptionLi role="option" id="chocolate">
+  Chocolate
+</OptionLi>
+<OptionLi role="option" id="strawberry">
+  Strawberry
+</OptionLi>
+<OptionLi role="option" id="banana">
+  Banana
+</OptionLi> */
+}

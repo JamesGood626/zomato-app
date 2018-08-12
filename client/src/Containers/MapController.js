@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { graphql, compose } from "react-apollo";
 import MapContainer from "./MapContainer";
-import { SEARCH_RESTAURANTS } from "../GraphQL/remoteQueries";
+// import { SEARCH_RESTAURANTS } from "../GraphQL/remoteQueries";
 import { getMapPosition } from "../GraphQL/localQueries";
 import { getSearchParameters } from "../GraphQL/localQueries";
 

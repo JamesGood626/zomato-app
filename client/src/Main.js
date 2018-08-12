@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import { graphql, compose } from "react-apollo";
+// import { graphql, compose } from "react-apollo";
 import { BrowserRouter } from "react-router-dom";
 import { Route, Switch } from "react-router";
 import InitialSearch from "./Containers/InitialSearch";
-import Home from "./AriaListbox/home";
 import MapController from "./Containers/MapController";
+import AriaListBox from "./AriaListbox";
 
 // Overview of application flow
 // Initial search renders Select and DropDown options for restaurant search parameters.
@@ -20,8 +20,8 @@ class Main extends Component {
     return (
       <BrowserRouter>
         <Switch>
-          <Route path="/" exact component={Home} />
-          <Route path="/initial-search" component={InitialSearch} />
+          <Route path="/" exact component={AriaListBox} />
+          <Route path="/search" component={InitialSearch} />
           <Route path="/map" component={MapController} />
         </Switch>
       </BrowserRouter>
