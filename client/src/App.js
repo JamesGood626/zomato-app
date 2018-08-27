@@ -18,10 +18,13 @@ import Main from "./Main";
 // I'm currently setting that on the serverside, but I think
 // it's better to go that route instead.
 
+const zomatoKey = process.env.ZOMATO_KEY || zomatoAPIKey;
+const mapKey = process.env.GOOGLE_MAPS_KEY || googleAPIKey;
+
 const cache = new InMemoryCache();
 const zomatoGraphQLAPI = new HttpLink({
   uri: "http://localhost:3000/graphql",
-  headers: { zomatoAPIKey, googleAPIKey }
+  headers: { zomatoKey, mapKey }
 });
 
 const defaultState = {
