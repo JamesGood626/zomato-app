@@ -12,7 +12,7 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  height: 100vh;
   width: 100vw;
   background: #fa5106;
   padding: 2rem 0;
@@ -55,10 +55,6 @@ class InitialSearch extends Component {
     document.body.appendChild(googleMapScript);
   };
 
-  componentDidUpdate = (prevProps, prevState) => {
-    console.log("Something should be here TWO? ", window.google);
-  };
-
   componentWillUnmount = () => {
     document.getElementById("addedScript").remove();
   };
@@ -74,16 +70,10 @@ class InitialSearch extends Component {
   showPosition = position => {
     const latitude = position.coords.latitude;
     const longitude = position.coords.longitude;
-    console.log(latitude);
-    console.log(longitude);
     this.setState({
       latitude,
       longitude
     });
-    console.log(
-      "This is the updateMapPosition resolver function: ",
-      this.props.updateMapPosition
-    );
     return this.props.updateMapPosition({ variables: { latitude, longitude } });
   };
 

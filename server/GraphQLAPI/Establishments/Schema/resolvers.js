@@ -8,16 +8,19 @@ const resolvers = {
       { latitude, longitude },
       { headers: { zomatoapikey } }
     ) => {
-      console.log("RUNNING ALL ESTABLISHMENTS");
-      const establishments = await getEstablishments(
-        axios,
-        {
-          latitude,
-          longitude
-        },
-        zomatoapikey
-      );
-      return establishments.data;
+      try {
+        const establishments = await getEstablishments(
+          axios,
+          {
+            latitude,
+            longitude
+          },
+          zomatoapikey
+        );
+        return establishments.data;
+      } catch (err) {
+        console.log("Error in the allEstablishments resolver: ", err);
+      }
     }
   }
 };

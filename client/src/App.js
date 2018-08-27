@@ -68,9 +68,6 @@ const stateLink = withClientState({
         cache.writeData({ query, data });
       },
       updateMapPosition: (_, { latitude, longitude }, { cache }) => {
-        console.log(
-          `Got the latitude: ${latitude} and longitude: ${longitude} in updateMapPosition Resolver`
-        );
         const query = gql`
           query GetMapPosition {
             mapPosition @client {

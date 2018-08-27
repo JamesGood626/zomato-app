@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import styled from "styled-components";
 import KeyCode from "./keyCodes";
 import "./listbox.css";
+// import { listBox, listboxButton } from "./refinedCode";
 // import aria from "./ARIA/listbox";
 
 // Work on replacing any this.Utils.removeClass or this.Utils.addClass
@@ -36,8 +37,13 @@ export default class AriaListBox extends Component {
   };
 
   componentDidMount = () => {
-    const button = document.getElementById("dropdown_button");
-    const listbox = new this.listBox(document.getElementById("listbox_list"));
+    const { instance } = this.props;
+    const buttonId = `dropdown_button_${instance}`;
+    const listboxId = `listbox_list_${instance}`;
+    // "dropdown_button"
+    const button = document.getElementById(buttonId);
+    // "listbox_list"
+    const listbox = new this.listBox(document.getElementById(listboxId));
     const listboxButton = new this.listboxButton(button, listbox);
   };
 
@@ -563,58 +569,78 @@ export default class AriaListBox extends Component {
   // For updating selected values in state
 
   // VERTIFY THIS IS WORKING FOR MULTISELECT
-  updateValues = (activeDescendant, currentElement) => {
-    console.log("The active descendant in updateValues: ", activeDescendant);
-    console.log("The active descendant in  currentElement: ", currentElement);
-    if (this.props.multiselectable) {
-      if (this.state.selectedValues[activeDescendant]) {
-        delete this.state.selectedValues[activeDescendant];
-        currentElement.setAttribute("aria-selected", "false");
-      } else {
-        this.setState((prevState, state) => ({
-          selectedValues: {
-            ...prevState.selectedValues,
-            [activeDescendant]: activeDescendant
-          }
-        }));
-        currentElement.setAttribute("aria-selected", "true");
-      }
-    } else {
-      this.setState({
-        selectedValue: activeDescendant
-      });
-    }
-  };
+  // updateValues = (activeDescendant, currentElement) => {
+  //   console.log("The active descendant in updateValues: ", activeDescendant);
+  //   console.log("The active descendant in  currentElement: ", currentElement);
+  //   if (this.props.multiselectable) {
+  //     if (this.state.selectedValues[activeDescendant]) {
+  //       delete this.state.selectedValues[activeDescendant];
+  //       currentElement.setAttribute("aria-selected", "false");
+  //     } else {
+  //       this.setState((prevState, state) => ({
+  //         selectedValues: {
+  //           ...prevState.selectedValues,
+  //           [activeDescendant]: activeDescendant
+  //         }
+  //       }));
+  //       currentElement.setAttribute("aria-selected", "true");
+  //     }
+  //   } else {
+  //     this.setState({
+  //       selectedValue: activeDescendant
+  //     });
+  //   }
+  // };
 
+  // This is where you can call updateSelectedOptions(id, value)
+  // where value can be an array for multiselect dropdowns
+  // and a single value if not multiselect
+  // BEFORE I work on implementing that though.
+  // I think it's best if I work on enabling whether or not the dropdown can be multiselect
+  // by passed in props
+  // and the style of the dropdown since there's where stuff right now.
   handleClick = e => {
     // Utilizing an onClick event listener on the ListBoxUl.
     // So long as the id of the OptionLi contains the desired value.. It'll work.
     console.log(e.target.id);
+    // console.log(this.state);
   };
 
   render() {
+    const { instance } = this.props;
     return (
       <DropDownContainerDiv id="dropdown-select">
         <DropDownButton
           tabIndex="0"
           aria-haspopup="listbox"
-          aria-labelledby="dropdown_button"
-          id="dropdown_button"
+          aria-labelledby={`dropdown_button_${instance}`}
+          id={`dropdown_button_${instance}`}
           class="dropdown-select-button"
         >
           Please Select
         </DropDownButton>
         <Arrow class="triangle">&#9660;</Arrow>
         <ListBoxUl
-          id="listbox_list"
+          id={`listbox_list_${instance}`}
           role="listbox"
           aria-multiselectable={this.props.multiselectable}
-          aria-labelledby="dropdown_button"
+          aria-labelledby={`dropdown_button_${instance}`}
           className="dropdown-selection hidden"
           onClick={this.handleClick}
           tabIndex="-1"
         >
-          {this.props.children}
+          <OptionLi role="option" id="vanilla">
+            Vanilla
+          </OptionLi>
+          <OptionLi role="option" id="chocolate">
+            Chocolate
+          </OptionLi>
+          <OptionLi role="option" id="strawberry">
+            Strawberry
+          </OptionLi>
+          <OptionLi role="option" id="banana">
+            Banana
+          </OptionLi>
         </ListBoxUl>
       </DropDownContainerDiv>
     );

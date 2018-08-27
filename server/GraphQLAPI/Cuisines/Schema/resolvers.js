@@ -8,7 +8,6 @@ const resolvers = {
       { latitude, longitude },
       { headers: { zomatoapikey } }
     ) => {
-      console.log("RUNNING ALL CUISINES");
       const cuisines = await getCuisines(
         axios,
         { latitude, longitude },

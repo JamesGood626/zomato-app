@@ -87,8 +87,6 @@ class Geocoder extends Component {
         lat: latitude,
         lng: longitude
       } = response.data.results[0].geometry.location;
-      console.log("THE LATITUDE: ", latitude);
-      console.log("THE LONGITUDE: ", longitude);
       updateMapPosition({ variables: { latitude, longitude } });
     });
   };

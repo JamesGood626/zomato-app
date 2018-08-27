@@ -6,7 +6,7 @@ import { getSearchParameters } from "../GraphQL/localQueries";
 import { updateSearchParameters } from "../GraphQL/localMutations";
 import { DropDown } from "../Components/DropDown";
 import { DropDownComposed } from "../Components/DropDownComposed";
-import { Select } from "../Components/Select";
+import SearchRadius from "../Components/searchRadius";
 import Geocoder from "../Components/Geocoder";
 
 const Form = styled.form`
@@ -42,27 +42,15 @@ class SearchForm extends Component {
       "The search parameters from apollo-link-state: ",
       this.props.searchParameters
     );
-    console.log("searchRestaurants: ", this.props.searchRestaurants);
-    console.log("props.submit: ", this.props.submit);
-    // this.props.history.push("/");
-    // const input = "ads";
-    // const newInst = new window.google.maps.places.Autocomplete(input);
-    console.log("THIS.PROPS.GOOGLE: ", this.props.google.maps.places);
   };
 
   componentDidUpdate = () => {
-    // console.log("updated comp:", this.props.searchParameters);
-    // console.log(
-    //   "searchRestaurants after update: ",
-    //   this.props.searchRestaurants
-    // );
     console.log("The props after update: ", this.props);
   };
 
+  // you can use this with the accessible drop down, but you'll just need to pass in the
+  // instance id and the option selected as value.
   updateSelectedOptions = e => {
-    // console.log("updateSelectedOptions: ", e.target);
-    // console.log("The target id: ", e.target.id); // "cuisine-select"/"establishment-select"
-    // console.log("The target value: ", e.target.value); // id which you'll be saving into state for query
     const { updateSearchParameters } = this.props;
     const id = e.target.id;
     let valueArray;
@@ -71,7 +59,6 @@ class SearchForm extends Component {
       valueArray = Array.prototype.slice
         .call(e.target.querySelectorAll(":checked"))
         .map(option => {
-          // option.value obtains the id you need
           console.log(
             "This is one of the selected options value: ",
             option.value
@@ -135,7 +122,7 @@ class SearchForm extends Component {
           updateSelectedOptions={this.updateSelectedOptions}
         />
         <Geocoder google={this.props.google} />
-        <Button onClick={this.redirectToMap}>Submit</Button>
+        <Button onClick={this.redirectToMap}>Search</Button>
       </Form>
     );
   }
@@ -149,44 +136,3 @@ export default compose(
     })
   })
 )(SearchForm);
-
-{
-  /* <Select
-          id="categories"
-          title="Categories"
-          multiple={true}
-          updateSelectedOptions={this.updateSelectedOptions}
-        >
-          <DropDown renderOptions={"categories"} />
-        </Select>
-        <Select
-          id="cuisines"
-          title="Cuisines"
-          multiple={true}
-          updateSelectedOptions={this.updateSelectedOptions}
-        >
-          <DropDown renderOptions={"cuisines"} />
-        </Select>
-        <Select
-          id="establishment"
-          title="Establishments"
-          updateSelectedOptions={this.updateSelectedOptions}
-        >
-          <DropDown
-            renderOptions={"establishments"}
-            latitude={this.props.latitude}
-            longitude={this.props.longitude}
-          />
-        </Select>
-        <Select
-          id="radius"
-          title="Radius"
-          updateSelectedOptions={this.updateSelectedOptions}
-        ><option value="20000">20000</option>
-          <option value="30000">30000</option>
-          <option value="40000">40000</option>
-          <option value="50000">50000</option>
-          <option value="60000">60000</option>
-        </Select>
-*/
-}

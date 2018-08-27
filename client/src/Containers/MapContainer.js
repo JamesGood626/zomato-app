@@ -142,11 +142,6 @@ export class MapContainer extends Component {
     });
   };
 
-  // windowHasOpened = () => {
-  //   console.log("WINDOW HAS OPENED");
-  //   // Could do some fancy animation here if I so desire.
-  // };
-
   render() {
     const {
       latitude,

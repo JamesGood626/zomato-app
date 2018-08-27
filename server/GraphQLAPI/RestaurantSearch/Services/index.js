@@ -24,6 +24,8 @@ const getRestaurantSearch = async (
     builtUrl += `&establishment=${establishment}`;
   }
   if (radius) {
+    console.log("The radius: ", radius);
+    console.log(typeof radius);
     builtUrl += `&radius=${radius}`;
   }
   return await axios({

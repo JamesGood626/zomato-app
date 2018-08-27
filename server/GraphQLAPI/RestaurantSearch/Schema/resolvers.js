@@ -17,9 +17,6 @@ const resolvers = {
       },
       { headers: { zomatoapikey } }
     ) => {
-      console.log("RUNNING ALL RESTAURANTS");
-      // console.log("The latitude: ", latitude);
-      // console.log("The longitude: ", longitude);
       const restaurants = await getRestaurantSearch(
         axios,
         {

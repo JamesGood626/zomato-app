@@ -4,7 +4,6 @@ const getCategories = require("../Services");
 const resolvers = {
   Query: {
     allCategories: async (parentValue, {}, { headers: { zomatoapikey } }) => {
-      console.log("RUNNING ALL CATEGORIES");
       const categories = await getCategories(axios, zomatoapikey);
       return categories.data;
     }
