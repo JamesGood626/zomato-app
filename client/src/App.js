@@ -27,7 +27,6 @@ const zomatoGraphQLAPI = new HttpLink({
   headers: { zomatoKey, mapKey }
 });
 
-console.log("testing: ", zomatoKey);
 const defaultState = {
   mapPosition: {
     __typename: "MapPosition",
