@@ -23,7 +23,7 @@ const mapKey = process.env.GOOGLE_MAPS_KEY || googleAPIKey;
 
 const cache = new InMemoryCache();
 const zomatoGraphQLAPI = new HttpLink({
-  uri: "http://localhost:3000/graphql",
+  uri: "/graphql",
   headers: { zomatoKey, mapKey }
 });
 
