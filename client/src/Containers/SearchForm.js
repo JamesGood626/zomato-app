@@ -37,16 +37,12 @@ const Button = styled.button`
 // fire off the query for restaurant search and utilize the values in
 // this.props.searchParameters for the query variables
 class SearchForm extends Component {
-  componentDidMount = () => {
-    console.log(
-      "The search parameters from apollo-link-state: ",
-      this.props.searchParameters
-    );
-  };
-
-  componentDidUpdate = () => {
-    console.log("The props after update: ", this.props);
-  };
+  // componentDidMount = () => {
+  //   console.log(
+  //     "The search parameters from apollo-link-state: ",
+  //     this.props.searchParameters
+  //   );
+  // };
 
   // you can use this with the accessible drop down, but you'll just need to pass in the
   // instance id and the option selected as value.
@@ -59,10 +55,6 @@ class SearchForm extends Component {
       valueArray = Array.prototype.slice
         .call(e.target.querySelectorAll(":checked"))
         .map(option => {
-          console.log(
-            "This is one of the selected options value: ",
-            option.value
-          );
           return option.value;
         });
     } else {
