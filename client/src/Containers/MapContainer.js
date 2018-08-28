@@ -5,6 +5,8 @@ import { googleAPIKey } from "../Config";
 import { Query } from "react-apollo";
 import { SEARCH_RESTAURANTS } from "../GraphQL/remoteQueries";
 
+const mapKey = process.env.GOOGLE_MAPS_KEY || googleAPIKey;
+
 // Remember MapFacilitator and making it a compound component so that
 // the map prop can be passed down to Marker without having to render the
 // Map inside of renderMap -> as an attempt to mitigate the flashing markers on marker click.
@@ -181,7 +183,7 @@ export class MapContainer extends Component {
 }
 
 export default GoogleApiWrapper({
-  apiKey: googleAPIKey
+  apiKey: mapKey
 })(MapContainer);
 
 // export default compose(

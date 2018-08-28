@@ -3,8 +3,8 @@ const getCategories = require("../Services");
 
 const resolvers = {
   Query: {
-    allCategories: async (parentValue, {}, { headers: { zomatoapikey } }) => {
-      const categories = await getCategories(axios, zomatoapikey);
+    allCategories: async (parentValue, {}, { headers: { zomatokey } }) => {
+      const categories = await getCategories(axios, zomatokey);
       return categories.data;
     }
   }

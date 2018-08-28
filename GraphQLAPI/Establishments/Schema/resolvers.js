@@ -6,21 +6,17 @@ const resolvers = {
     allEstablishments: async (
       parentValue,
       { latitude, longitude },
-      { headers: { zomatoapikey } }
+      { headers: { zomatokey } }
     ) => {
-      try {
-        const establishments = await getEstablishments(
-          axios,
-          {
-            latitude,
-            longitude
-          },
-          zomatoapikey
-        );
-        return establishments.data;
-      } catch (err) {
-        console.log("Error in the allEstablishments resolver: ", err);
-      }
+      const establishments = await getEstablishments(
+        axios,
+        {
+          latitude,
+          longitude
+        },
+        zomatokey
+      );
+      return establishments.data;
     }
   }
 };

@@ -4,7 +4,7 @@ import { ApolloLink } from "apollo-link";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { HttpLink } from "apollo-link-http";
 import { withClientState } from "apollo-link-state";
-import { ApolloProvider, createNetworkInterface } from "react-apollo";
+import { ApolloProvider } from "react-apollo";
 import gql from "graphql-tag";
 import { zomatoAPIKey, googleAPIKey } from "./Config";
 // import { getSearchParameters } from "./GraphQL/localQueries";
@@ -23,9 +23,7 @@ const mapKey = process.env.GOOGLE_MAPS_KEY || googleAPIKey;
 
 const cache = new InMemoryCache();
 const zomatoGraphQLAPI = new HttpLink({
-  networkInterface: createNetworkInterface({
-    uri: "/graphql"
-  }),
+  uri: "http://localhost:3000/graphql",
   headers: { zomatoKey, mapKey }
 });
 

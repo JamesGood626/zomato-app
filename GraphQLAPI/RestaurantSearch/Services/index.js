@@ -4,10 +4,10 @@ const zomatoAPIKey = require("../../../Config");
 const getRestaurantSearch = async (
   axios,
   { latitude, longitude, cuisines, categories, establishment, radius },
-  zomatoapikey
+  zomatoKey
 ) => {
   if (process.env.NODE_ENV === "development") {
-    zomatoapikey = zomatoAPIKey;
+    zomatoKey = zomatoAPIKey;
   }
   let builtUrl = `https://developers.zomato.com/api/v2.1/search?lat=${latitude}&lon=${longitude}`;
   if (typeof cuisines === "object" && cuisines.length > 0) {
@@ -24,14 +24,12 @@ const getRestaurantSearch = async (
     builtUrl += `&establishment=${establishment}`;
   }
   if (radius) {
-    console.log("The radius: ", radius);
-    console.log(typeof radius);
     builtUrl += `&radius=${radius}`;
   }
   return await axios({
     method: "get",
     url: builtUrl,
-    headers: { "user-key": zomatoapikey }
+    headers: { "user-key": zomatoKey }
   });
 };
 

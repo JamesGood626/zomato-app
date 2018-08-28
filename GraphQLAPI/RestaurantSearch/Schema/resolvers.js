@@ -15,7 +15,7 @@ const resolvers = {
           radius
         }
       },
-      { headers: { zomatoapikey } }
+      { headers: { zomatokey } }
     ) => {
       const restaurants = await getRestaurantSearch(
         axios,
@@ -27,7 +27,7 @@ const resolvers = {
           establishment,
           radius
         },
-        zomatoapikey
+        zomatokey
       );
       return restaurants.data;
     }

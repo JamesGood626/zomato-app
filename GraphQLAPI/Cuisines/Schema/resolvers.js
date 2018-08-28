@@ -6,12 +6,12 @@ const resolvers = {
     allCuisines: async (
       parentValue,
       { latitude, longitude },
-      { headers: { zomatoapikey } }
+      { headers: { zomatokey } }
     ) => {
       const cuisines = await getCuisines(
         axios,
         { latitude, longitude },
-        zomatoapikey
+        zomatokey
       );
       return cuisines.data;
     }

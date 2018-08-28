@@ -6,6 +6,8 @@ import styled from "styled-components";
 import { updateMapPosition } from "../GraphQL/localMutations";
 import { googleAPIKey } from "../Config";
 
+const mapKey = process.env.GOOGLE_MAPS_KEY || googleAPIKey;
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -81,7 +83,7 @@ class Geocoder extends Component {
         formattedQueryString = place.address_components[0].long_name;
       }
       const response = await axios.get(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${formattedQueryString}&key=${googleAPIKey}`
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${formattedQueryString}&key=${mapKey}`
       );
       const {
         lat: latitude,

@@ -1,13 +1,13 @@
 const zomatoAPIKey = require("../../../Config");
 
-const getCuisines = async (axios, { latitude, longitude }, zomatoapikey) => {
+const getCuisines = async (axios, { latitude, longitude }, zomatoKey) => {
   if (process.env.NODE_ENV === "development") {
-    zomatoapikey = zomatoAPIKey;
+    zomatoKey = zomatoAPIKey;
   }
   return await axios({
     method: "get",
     url: `https://developers.zomato.com/api/v2.1/cuisines?lat=${latitude}&lon=${longitude}`,
-    headers: { "user-key": zomatoapikey }
+    headers: { "user-key": zomatoKey }
   });
 };
 

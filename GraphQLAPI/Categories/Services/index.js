@@ -1,13 +1,13 @@
 const zomatoAPIKey = require("../../../Config");
 
-const getCategories = async (axios, zomatoapikey) => {
+const getCategories = async (axios, zomatoKey) => {
   if (process.env.NODE_ENV === "development") {
-    zomatoapikey = zomatoAPIKey;
+    zomatoKey = zomatoAPIKey;
   }
   return await axios({
     method: "get",
     url: `https://developers.zomato.com/api/v2.1/categories`,
-    headers: { "user-key": zomatoapikey }
+    headers: { "user-key": zomatoKey }
   });
 };
 
