@@ -32,10 +32,10 @@ export default class LoadingOverlay extends Component {
   render() {
     return ReactDOM.createPortal(
       <OverlayDiv>
-        {geolocationUnavailable === null ? (
+        {this.props.geolocationUnavailable === null ? (
           <Loading>Loading...</Loading>
         ) : (
-          <Loading>{geolocationUnavailable}</Loading>
+          <Loading>{this.props.geolocationUnavailable}</Loading>
         )}
       </OverlayDiv>,
       this.loadingOverlay
