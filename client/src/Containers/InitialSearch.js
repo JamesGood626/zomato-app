@@ -43,7 +43,8 @@ class InitialSearch extends Component {
   state = {
     latitude: null,
     longitude: null,
-    trigger: false
+    trigger: false,
+    geolocationUnavailable: null
   };
 
   componentDidMount = () => {
@@ -64,6 +65,9 @@ class InitialSearch extends Component {
       navigator.geolocation.getCurrentPosition(this.showPosition);
     } else {
       console.log("Geolocation is not supported by this browser.");
+      this.setState({
+        geolocationUnavailable: "Device can't obtain your location."
+      });
     }
   };
 
@@ -79,7 +83,7 @@ class InitialSearch extends Component {
 
   render() {
     const { history } = this.props;
-    const { latitude, longitude } = this.state;
+    const { latitude, longitude, geolocationUnavailable } = this.state;
     return (
       <Container>
         {latitude && longitude ? (
@@ -93,7 +97,7 @@ class InitialSearch extends Component {
             />
           </FormContainer>
         ) : (
-          <LoadingOverlay />
+          <LoadingOverlay geolocationUnavailable={geolocationUnavailable} />
         )}
       </Container>
     );

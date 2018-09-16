@@ -14,7 +14,9 @@ const OverlayDiv = styled.div`
   background: #fcfcfc;
 `;
 
-const Loading = styled.h1`color: #fa5106;`;
+const Loading = styled.h1`
+  color: #fa5106;
+`;
 
 export default class LoadingOverlay extends Component {
   constructor(props) {
@@ -30,7 +32,11 @@ export default class LoadingOverlay extends Component {
   render() {
     return ReactDOM.createPortal(
       <OverlayDiv>
-        <Loading>Loading...</Loading>
+        {geolocationUnavailable === null ? (
+          <Loading>Loading...</Loading>
+        ) : (
+          <Loading>{geolocationUnavailable}</Loading>
+        )}
       </OverlayDiv>,
       this.loadingOverlay
     );
