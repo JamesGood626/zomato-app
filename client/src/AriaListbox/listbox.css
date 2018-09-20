@@ -2,6 +2,12 @@
   visibility: hidden;
 }
 
+/* .maintain-padding {
+  padding: 8px 10px 8px 15px;
+  background: orange;
+} */
+
 .focused {
+  padding: 8px 10px 8px 15px;
   background: lime;
 }

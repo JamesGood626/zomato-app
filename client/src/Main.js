@@ -4,7 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { Route, Switch } from "react-router";
 import InitialSearch from "./Containers/InitialSearch";
 import MapController from "./Containers/MapController";
-// import AriaListbox from "./AriaListbox";
+import AriaListbox from "./AriaListbox";
 
 // Overview of application flow
 // Initial search renders Select and DropDown options for restaurant search parameters.
@@ -22,6 +22,7 @@ class Main extends Component {
         <Switch>
           <Route path="/" exact component={InitialSearch} />
           <Route path="/map" component={MapController} />
+          <Route path="/drop-down" component={AriaListbox} />
         </Switch>
       </BrowserRouter>
     );

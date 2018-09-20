@@ -7,25 +7,29 @@ import "./listbox.css";
 
 // Work on replacing any this.Utils.removeClass or this.Utils.addClass
 // with Vanilla js remove and adds
-const ContainerDiv = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  width: 100vw;
-`;
+// const ContainerDiv = styled.div`
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   height: 100vh;
+//   width: 100vw;
+// `;
 
-const Select = styled.select`
-  appearance: none;
-  -webkit-appearance: none;
-  display: block;
-  margin: 30px 0;
-  padding: 10px 50px 10px 10px;
-  background-color: #fa5106;
-  color: #fff;
-  border-radius: 4px;
-  border: 2px solid #aaa;
-  width: 280px;
+// const Select = styled.select`
+//   appearance: none;
+//   -webkit-appearance: none;
+//   display: block;
+//   margin: 30px 0;
+//   padding: 10px 50px 10px 10px;
+//   background-color: #fa5106;
+//   color: #fff;
+//   border-radius: 4px;
+//   border: 2px solid #aaa;
+//   width: 280px;
+// `;
+
+const Span = styled.span`
+  display: none;
 `;
 
 // New problem to work on.... Need to create a revealing module pattern so that I can have multiple instances of
@@ -33,7 +37,9 @@ const Select = styled.select`
 export default class AriaListBox extends Component {
   state = {
     selectedValue: "",
-    selectedValues: {}
+    selectedElement: null,
+    selectedValues: {},
+    listboxOpen: false
   };
 
   componentDidMount = () => {
@@ -75,7 +81,7 @@ export default class AriaListBox extends Component {
   };
 
   registerListboxButtonEvents = () => {
-    this.button.addEventListener("click", this.showListbox.bind(this));
+    this.button.addEventListener("click", this.toggleListboxShow.bind(this));
     this.button.addEventListener("keyup", this.checkShow.bind(this));
     this.listboxNode.addEventListener("blur", this.hideListbox.bind(this));
     this.listboxNode.addEventListener("keydown", this.checkHide.bind(this));
@@ -108,16 +114,21 @@ export default class AriaListBox extends Component {
     }
   };
 
+  toggleListboxShow = () => {
+    this.state.listboxOpen ? this.hideListbox() : this.showListbox();
+    this.setState((prevState, state) => ({
+      listboxOpen: !prevState.listboxOpen
+    }));
+  };
+
   showListbox = () => {
     this.listboxNode.removeAttribute("class", "hidden");
-    // this.Utils.removeClass(this.listboxNode, "hidden");
     this.button.setAttribute("aria-expanded", "true");
     this.listboxNode.focus();
   };
 
   hideListbox = () => {
     this.listboxNode.setAttribute("class", "hidden");
-    // this.Utils.addClass(this.listbox.listboxNode, "hidden");
     this.button.removeAttribute("aria-expanded");
   };
 
@@ -143,11 +154,10 @@ export default class AriaListBox extends Component {
     this.multiselectable = this.listboxNode.hasAttribute(
       "aria-multiselectable"
     );
-    this.moveUpDownEnabled = false;
+    // this.moveUpDownEnabled = false;
     this.siblingList = null;
     this.upButton = null;
     this.downButton = null;
-    this.moveButton = null;
     this.keysSoFar = "";
     this.handleFocusChange = function() {};
     this.handleItemChange = function(event, items) {};
@@ -189,38 +199,22 @@ export default class AriaListBox extends Component {
   checkKeyPress = evt => {
     var key = evt.which || evt.keyCode;
     var nextItem = document.getElementById(this.activeDescendant);
-
     if (!nextItem) {
       return;
     }
 
     switch (key) {
       case KeyCode.PAGE_UP: // 33
-      case KeyCode.PAGE_DOWN: // 34
-        if (this.moveUpDownEnabled) {
-          evt.preventDefault();
+      // case KeyCode.PAGE_DOWN: // 34
+      //   if (this.moveUpDownEnabled) {
+      //     evt.preventDefault();
+      //   }
 
-          if (key === KeyCode.PAGE_UP) {
-            this.moveUpItems();
-          } else {
-            this.moveDownItems();
-          }
-        }
-
-        break;
+      //   break;
       case KeyCode.UP: // 38
       case KeyCode.DOWN: // 40
         evt.preventDefault();
-
-        if (this.moveUpDownEnabled && evt.altKey) {
-          if (key === KeyCode.UP) {
-            this.moveUpItems();
-          } else {
-            this.moveDownItems();
-          }
-          return;
-        }
-
+        // !!** These lines do matter
         if (key === KeyCode.UP) {
           nextItem = nextItem.previousElementSibling;
         } else {
@@ -250,110 +244,20 @@ export default class AriaListBox extends Component {
       case KeyCode.BACKSPACE: // 8
       case KeyCode.DELETE: // 46
       case KeyCode.RETURN: // 13
-        if (!this.moveButton) {
-          return;
-        }
-
-        var keyshortcuts = this.moveButton.getAttribute("aria-keyshortcuts");
-        if (key === KeyCode.RETURN && keyshortcuts.indexOf("Enter") === -1) {
-          return;
-        }
-        if (
-          (key === KeyCode.BACKSPACE || key === KeyCode.DELETE) &&
-          keyshortcuts.indexOf("Delete") === -1
-        ) {
-          return;
-        }
-
-        evt.preventDefault();
-
-        var nextUnselected = nextItem.nextElementSibling;
-        while (nextUnselected) {
-          if (nextUnselected.getAttribute("aria-selected") != "true") {
-            break;
-          }
-          nextUnselected = nextUnselected.nextElementSibling;
-        }
-        if (!nextUnselected) {
-          nextUnselected = nextItem.previousElementSibling;
-          while (nextUnselected) {
-            if (nextUnselected.getAttribute("aria-selected") != "true") {
-              break;
-            }
-            nextUnselected = nextUnselected.previousElementSibling;
-          }
-        }
-
-        this.moveItems();
-
-        if (!this.activeDescendant && nextUnselected) {
-          this.focusItem(nextUnselected);
-        }
-        break;
-      default:
-        var itemToFocus = this.findItemToFocus(key);
-        if (itemToFocus) {
-          this.focusItem(itemToFocus);
-        }
-        break;
+        // Need to return here.
+        return;
     }
-  };
-
-  findItemToFocus = key => {
-    var itemList = this.listboxNode.querySelectorAll('[role="option"]');
-    var character = String.fromCharCode(key);
-
-    if (!this.keysSoFar) {
-      for (var i = 0; i < itemList.length; i++) {
-        if (itemList[i].getAttribute("id") == this.activeDescendant) {
-          this.searchIndex = i;
-        }
-      }
-    }
-    this.keysSoFar += character;
-    this.clearKeysSoFarAfterDelay();
-
-    var nextMatch = this.findMatchInRange(
-      itemList,
-      this.searchIndex + 1,
-      itemList.length
-    );
-    if (!nextMatch) {
-      nextMatch = this.findMatchInRange(itemList, 0, this.searchIndex);
-    }
-    return nextMatch;
-  };
-
-  clearKeysSoFarAfterDelay = () => {
-    if (this.keyClear) {
-      clearTimeout(this.keyClear);
-      this.keyClear = null;
-    }
-    this.keyClear = setTimeout(
-      function() {
-        this.keysSoFar = "";
-        this.keyClear = null;
-      }.bind(this),
-      500
-    );
-  };
-
-  findMatchInRange = (list, startIndex, endIndex) => {
-    // Find the first item starting with the keysSoFar substring, searching in
-    // the specified range of items
-    for (var n = startIndex; n < endIndex; n++) {
-      var label = list[n].innerText;
-      if (label && label.toUpperCase().indexOf(this.keysSoFar) === 0) {
-        return list[n];
-      }
-    }
-    return null;
   };
 
   checkClickItem = evt => {
     if (evt.target.getAttribute("role") === "option") {
       this.focusItem(evt.target);
       this.toggleSelectItem(evt.target);
+      this.hideListbox();
+      this.setState({
+        listboxOpen: false,
+        selectedValue: this.activeDescendant
+      });
     }
   };
 
@@ -363,14 +267,6 @@ export default class AriaListBox extends Component {
         "aria-selected",
         element.getAttribute("aria-selected") === "true" ? "false" : "true"
       );
-
-      if (this.moveButton) {
-        if (this.listboxNode.querySelector('[aria-selected="true"]')) {
-          this.moveButton.setAttribute("aria-disabled", "false");
-        } else {
-          this.moveButton.setAttribute("aria-disabled", "true");
-        }
-      }
     }
   };
 
@@ -379,12 +275,12 @@ export default class AriaListBox extends Component {
       return;
     }
 
-    element.removeAttribute("class", "focused");
+    element.classList.remove("focused");
   };
 
   focusItem = element => {
     this.defocusItem(document.getElementById(this.activeDescendant));
-    element.setAttribute("class", "focused");
+    element.classList.add("focused");
     this.listboxNode.setAttribute("aria-activedescendant", element.id);
     this.activeDescendant = element.id;
 
@@ -404,39 +300,40 @@ export default class AriaListBox extends Component {
       this.moveButton.setAttribute("aria-disabled", false);
     }
 
-    this.checkUpDownButtons();
+    // this.checkUpDownButtons();
     this.handleFocusChange(element);
   };
 
-  checkUpDownButtons = () => {
-    var activeElement = document.getElementById(this.activeDescendant);
+  // checkUpDownButtons = () => {
+  //   var activeElement = document.getElementById(this.activeDescendant);
 
-    if (!this.moveUpDownEnabled) {
-      return false;
-    }
+  //   if (!this.moveUpDownEnabled) {
+  //     return false;
+  //   }
 
-    if (!activeElement) {
-      this.upButton.setAttribute("aria-disabled", "true");
-      this.downButton.setAttribute("aria-disabled", "true");
-      return;
-    }
+  //   // WHAT THESE LINES OF CODE DO?
+  //   // if (!activeElement) {
+  //   //   this.upButton.setAttribute("aria-disabled", "true");
+  //   //   this.downButton.setAttribute("aria-disabled", "true");
+  //   //   return;
+  //   // }
 
-    if (this.upButton) {
-      if (activeElement.previousElementSibling) {
-        this.upButton.setAttribute("aria-disabled", false);
-      } else {
-        this.upButton.setAttribute("aria-disabled", "true");
-      }
-    }
+  //   // if (this.upButton) {
+  //   //   if (activeElement.previousElementSibling) {
+  //   //     this.upButton.setAttribute("aria-disabled", false);
+  //   //   } else {
+  //   //     this.upButton.setAttribute("aria-disabled", "true");
+  //   //   }
+  //   // }
 
-    if (this.downButton) {
-      if (activeElement.nextElementSibling) {
-        this.downButton.setAttribute("aria-disabled", false);
-      } else {
-        this.downButton.setAttribute("aria-disabled", "true");
-      }
-    }
-  };
+  //   // if (this.downButton) {
+  //   //   if (activeElement.nextElementSibling) {
+  //   //     this.downButton.setAttribute("aria-disabled", false);
+  //   //   } else {
+  //   //     this.downButton.setAttribute("aria-disabled", "true");
+  //   //   }
+  //   // }
+  // };
 
   addItems = items => {
     if (!items || !items.length) {
@@ -544,19 +441,14 @@ export default class AriaListBox extends Component {
     this.siblingList.addItems(itemsToMove);
   };
 
-  enableMoveUpDown = (upButton, downButton) => {
-    this.moveUpDownEnabled = true;
-    this.upButton = upButton;
-    this.downButton = downButton;
-    upButton.addEventListener("click", this.moveUpItems.bind(this));
-    downButton.addEventListener("click", this.moveDownItems.bind(this));
-  };
-
-  setupMove = (button, siblingList) => {
-    this.siblingList = siblingList;
-    this.moveButton = button;
-    button.addEventListener("click", this.moveItems.bind(this));
-  };
+  // THIS ISN'T BEING CALLED FROM ANYWHERE!
+  // enableMoveUpDown = (upButton, downButton) => {
+  //   this.moveUpDownEnabled = true;
+  //   this.upButton = upButton;
+  //   this.downButton = downButton;
+  //   upButton.addEventListener("click", this.moveUpItems.bind(this));
+  //   downButton.addEventListener("click", this.moveDownItems.bind(this));
+  // };
 
   setHandleItemChange = handlerFn => {
     this.handleItemChange = handlerFn;
@@ -569,28 +461,44 @@ export default class AriaListBox extends Component {
   // For updating selected values in state
 
   // VERTIFY THIS IS WORKING FOR MULTISELECT
-  // updateValues = (activeDescendant, currentElement) => {
-  //   console.log("The active descendant in updateValues: ", activeDescendant);
-  //   console.log("The active descendant in  currentElement: ", currentElement);
-  //   if (this.props.multiselectable) {
-  //     if (this.state.selectedValues[activeDescendant]) {
-  //       delete this.state.selectedValues[activeDescendant];
-  //       currentElement.setAttribute("aria-selected", "false");
-  //     } else {
-  //       this.setState((prevState, state) => ({
-  //         selectedValues: {
-  //           ...prevState.selectedValues,
-  //           [activeDescendant]: activeDescendant
-  //         }
-  //       }));
-  //       currentElement.setAttribute("aria-selected", "true");
-  //     }
-  //   } else {
-  //     this.setState({
-  //       selectedValue: activeDescendant
-  //     });
-  //   }
-  // };
+  updateValues = (activeDescendantValue, currentElement) => {
+    if (this.props.multiselectable) {
+      if (this.state.selectedValues[activeDescendantValue]) {
+        delete this.state.selectedValues[activeDescendantValue];
+        currentElement.setAttribute("aria-selected", "false");
+      } else {
+        this.setState((prevState, state) => ({
+          selectedValues: {
+            ...prevState.selectedValues,
+            [activeDescendantValue]: activeDescendantValue
+          }
+        }));
+        currentElement.setAttribute("aria-selected", "true");
+      }
+      // Should just be able to use everything beneath here for a single select drop-down listbox
+    } else {
+      if (this.state.selectedElement !== null) {
+        this.state.selectedElement.setAttribute("aria-selected", "false");
+      }
+      const button = document.querySelector(".dropdown-select-button");
+      button.textContent = activeDescendantValue.replace(/^\w/, c =>
+        c.toUpperCase()
+      );
+      // console.log("THE BUTTON: ", button);
+      // button.removeChild();
+      // const txt = document.createTextNode(
+      //   activeDescendantValue.replace(/^\w/, c => c.toUpperCase())
+      // );
+      // button.appendChild(txt);
+      // Not quite sure why I decided to add selected element to the state here.
+      // Ahh it's for the multiSelect purposes I believe.
+      currentElement.setAttribute("aria-selected", "true");
+      this.setState({
+        selectedValue: activeDescendantValue,
+        selectedElement: currentElement
+      });
+    }
+  };
 
   // This is where you can call updateSelectedOptions(id, value)
   // where value can be an array for multiselect dropdowns
@@ -610,14 +518,15 @@ export default class AriaListBox extends Component {
     const { instance } = this.props;
     return (
       <DropDownContainerDiv id="dropdown-select">
+        <Span id="exp_elem">Choose an element:</Span>
         <DropDownButton
           tabIndex="0"
           aria-haspopup="listbox"
-          aria-labelledby={`dropdown_button_${instance}`}
+          aria-labelledby={`exp_elem dropdown_button_${instance}`}
           id={`dropdown_button_${instance}`}
-          class="dropdown-select-button"
+          className="dropdown-select-button"
         >
-          Please Select
+          Vanilla
         </DropDownButton>
         <Arrow class="triangle">&#9660;</Arrow>
         <ListBoxUl
@@ -694,7 +603,7 @@ const DropDownContainerDiv = styled.div`
 
 const DropDownButton = styled.div`
   background: #3498db;
-  min-width: 100px;
+  width: 8rem;
   color: #fff;
   margin: 0;
   letter-spacing: 0.025rem;
@@ -740,20 +649,20 @@ const OptionLi = styled.li`
   box-sizing: border-box;
   cursor: pointer;
   transition: background 0.2s ease;
-
-  &:hover {
-    background: #f6f6f6;
-    transition: background 0.2s ease;
-  }
-
-  &:focus {
-    background: lime;
-  }
-
-  &:selected {
-    background: yellow;
-  }
 `;
+
+// &:hover {
+//   background: #f6f6f6;
+//   transition: background 0.2s ease;
+// }
+
+// &:focus {
+//   background: lime;
+// }
+
+// &:selected {
+//   background: yellow;
+// }
 
 {
   /* <OptionLi role="option" id="vanilla">
